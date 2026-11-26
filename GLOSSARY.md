@@ -163,7 +163,7 @@ _Avoid_: cross-link, external dependency
 ### Launching
 
 **Start**:
-The one launching act: claim, prepare, open a Session. Acts on a Frontier ticket, a Frontier system, a Decision frontier ticket, a Split frontier Spec, or the Map while it has a Decision frontier. Also acts on the repo itself for `/improve-codebase-architecture`: no star, no Claim, run in the main checkout. A new session also acts on the repo itself: no star, no Claim, run in the main checkout, with an optional skill and first message.
+The one launching act: claim, prepare, open a Session. Acts on a Frontier ticket, a Frontier system, a Decision frontier ticket, a Split frontier Spec, or the Map while it has a Decision frontier. Also acts on the repo itself for `/improve-codebase-architecture`: no star, no Claim. It runs in one fixed worktree, detached at the chosen Base, so the main checkout does not change. A new session also acts on the repo itself: no star, no Claim, run in the main checkout, with an optional skill and first message.
 _Avoid_: run, launch button, dispatch
 
 **Claim**:

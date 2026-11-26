@@ -12,6 +12,18 @@ describe('parsePlanRequest', () => {
     ).toEqual({ target: { kind: 'ticket', id: '613' }, base: 'dev' });
   });
 
+  it('keeps the Base override of an architecture review', () => {
+    expect(parsePlanRequest({ repo: '/r', target: { kind: 'architecture' }, base: 'dev' })).toEqual(
+      { target: { kind: 'architecture' }, base: 'dev' },
+    );
+  });
+
+  it('drops a Base override on a new session', () => {
+    expect(
+      parsePlanRequest({ repo: '/r', target: { kind: 'session', key: 'k1' }, base: 'dev' }),
+    ).toEqual({ target: { kind: 'session', key: 'k1' }, base: null });
+  });
+
   it('accepts a new session with only a key', () => {
     expect(session({ key: 'k1' })).toEqual({ target: { kind: 'session', key: 'k1' }, base: null });
   });

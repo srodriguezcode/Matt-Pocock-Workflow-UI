@@ -12,13 +12,13 @@ export const MAX_PROMPT = 20_000;
 export function parsePlanRequest(body: unknown): { target: LaunchTarget; base: string | null } {
   const request = body as Partial<PlanRequest> | null;
   const target = request?.target;
-  if (target?.kind === 'architecture') return { target: { kind: 'architecture' }, base: null };
   if (target?.kind === 'session') return { target: sessionTarget(target), base: null };
+  const base = typeof request?.base === 'string' && request.base ? request.base : null;
+  if (target?.kind === 'architecture') return { target: { kind: 'architecture' }, base };
   const star = target && 'id' in target && typeof target.id === 'string';
   if (!target || !star || !STAR_KINDS.includes(target.kind)) {
     throw new HttpError(400, 'target is required');
   }
-  const base = typeof request.base === 'string' && request.base ? request.base : null;
   return { target, base };
 }
 
