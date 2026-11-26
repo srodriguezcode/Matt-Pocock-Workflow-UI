@@ -105,6 +105,10 @@ _Avoid_: spec frontier, decision frontier (that is tickets)
 A Ticket labelled `to-be-confirmed`, `needs-triage` or `needs-info`. A real issue, so a Star, never Fog; on no frontier whatever its gate.
 _Avoid_: fog, parked, unclear, triage
 
+**Untriaged**:
+An open Ticket or Spec with no assignee that is Undecided, or a Build ticket with no Readiness. Its Gate past that does not matter: a Blocked ticket can be Untriaged. Start on it opens a triage Session and claims nothing. Its look stays as it is; only the pill changes.
+_Avoid_: triage ticket (reads as a third kind), triage frontier (every frontier needs gate Clear), needs triage
+
 ### Age
 
 **Age**:
@@ -163,7 +167,7 @@ _Avoid_: cross-link, external dependency
 ### Launching
 
 **Start**:
-The one launching act: claim, prepare, open a Session. Acts on a Frontier ticket, a Frontier system, a Decision frontier ticket, a Split frontier Spec, or the Map while it has a Decision frontier. Also acts on the repo itself for `/improve-codebase-architecture`: no star, no Claim. It runs in one fixed worktree, detached at the chosen Base, so the main checkout does not change. A new session also acts on the repo itself: no star, no Claim, run in the main checkout, with an optional skill and first message. The board follows it like a star's Session, from a list in the corner.
+The one launching act: claim, prepare, open a Session. Acts on a Frontier ticket, a Frontier system, a Decision frontier ticket, a Split frontier Spec, or the Map while it has a Decision frontier. Also acts on an Untriaged ticket or Spec: no Claim, run in the main checkout, refused while a linked triage Session on it is not Ended or Lost. Also acts on the repo itself for `/improve-codebase-architecture`: no star, no Claim. It runs in one fixed worktree, detached at the chosen Base, so the main checkout does not change. A new session also acts on the repo itself: no star, no Claim, run in the main checkout, with an optional skill and first message. The board follows it like a star's Session, from a list in the corner.
 _Avoid_: run, launch button, dispatch
 
 **Claim**:
