@@ -49,7 +49,6 @@ export const session = {
       count === 0 ? 'Notifications' : `Notifications: ${count} waiting on you`,
     heading: 'Waiting on you',
     empty: 'Nothing waits on you.',
-    newSession: 'New session',
     dismiss: 'Dismiss until the session moves again',
     reasons: {
       ask: 'Asks a question',

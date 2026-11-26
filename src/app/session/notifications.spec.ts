@@ -98,18 +98,9 @@ describe('notificationsOf', () => {
 });
 
 describe('notificationsOf on a new session', () => {
-  it('names no star and titles it with its first line', () => {
+  it('leaves it to its own button, off the bell', () => {
     const target = { kind: 'session', key: 'k1', title: 'Add dark mode' } as const;
-    const [item] = notificationsOf(
-      [session('n', { target, state: 'waiting', waiting: 'turn-end' })],
-      repos,
-      { path: '/a', sky, placed: new Map() },
-    );
-    expect(item).toMatchObject({
-      starId: null,
-      handle: null,
-      title: 'Add dark mode',
-      reason: 'reply',
-    });
+    const waiting = session('n', { target, state: 'waiting', waiting: 'turn-end' });
+    expect(notificationsOf([waiting], repos, { path: '/a', sky, placed: new Map() })).toEqual([]);
   });
 });

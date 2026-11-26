@@ -22,7 +22,7 @@
       @for (s of all; track s.sessionId) {
         <button type="button" class="item" role="menuitem" (click)="go(s.sessionId)">
           <span class="title">{{ s.target.title || m.noMessage }}</span>
-          <span class="state" [class.asking]="s.state === 'asking' || s.state === 'waiting'">
+          <span class="state" [class.asking]="calls(s)">
             {{ states[s.state] }}
           </span>
         </button>

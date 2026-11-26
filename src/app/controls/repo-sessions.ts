@@ -1,6 +1,9 @@
 import { Component, computed, ElementRef, HostListener, inject, signal } from '@angular/core';
 import { I18nService } from '@app/i18n/i18n.service';
 import { Peek } from '@app/panel/session/peek';
+import { Dismissals } from '@app/session/dismissals';
+import { noticeKey } from '@app/session/notice-key';
+import type { RepoSession } from '@app/session/repo-session-list';
 import { RepoSessions } from '@app/session/repo-sessions';
 
 /** The list hides while the active repo has no live new session. The open Peek outlives it. */
@@ -17,9 +20,14 @@ export class RepoSessionList {
   protected readonly list = this.sessions.list;
   protected readonly opened = this.sessions.opened;
   protected readonly open = signal(false);
-  protected readonly waiting = computed(() =>
-    this.list().some((s) => s.state === 'asking' || s.state === 'waiting'),
-  );
+  private readonly seen = inject(Dismissals).seen;
+  /** The bell leaves new sessions out, so this button lights for them until each is opened. */
+  protected readonly waiting = computed(() => this.list().some((s) => this.calls(s)));
+
+  protected calls(session: RepoSession): boolean {
+    const waits = session.state === 'asking' || session.state === 'waiting';
+    return waits && !this.seen().has(noticeKey(session));
+  }
 
   protected toggle(): void {
     this.open.update((open) => !open);

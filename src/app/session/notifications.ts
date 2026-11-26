@@ -10,19 +10,15 @@ export interface Notification {
   sessionId: string;
   repo: string;
   repoName: string;
-  /** `null` for a new session: it opens in the panel, not on a star. */
-  starId: string | null;
-  /**
-   * The star's handle and title when its repo's sky is loaded, else `null`.
-   * A new session has no handle, and its title is its first line.
-   */
+  starId: string;
+  /** The star's handle and title when its repo's sky is loaded, else `null`. */
   handle: string | null;
   title: string | null;
   reason: NotificationReason;
   since: string;
 }
 
-/** Asking and Waiting Sessions across every repo, the longest waiting first. */
+/** Asking and Waiting star Sessions across every repo, the longest waiting first. A new session waits on its own button instead. */
 export function notificationsOf(
   sessions: Iterable<SessionView>,
   repos: RepoConfig[],
@@ -30,11 +26,12 @@ export function notificationsOf(
 ): Notification[] {
   const out: Notification[] = [];
   for (const session of sessions) {
+    if (session.target.kind === 'session') continue;
     const sky = active?.path === session.repo ? active.sky : null;
     const reason = reasonOf(session, sky);
     if (!reason) continue;
     const repo = repos.find((r) => r.path === session.repo);
-    const starId = placedOn(session, active) ?? starIdOf(session.target);
+    const starId = placedOn(session, active) ?? session.target.id;
     const star = sky
       ? (sky.tickets.find((t) => t.id === starId) ??
         sky.systems.find((s) => s.id === starId) ??
@@ -46,8 +43,7 @@ export function notificationsOf(
       repoName: repo?.name ?? session.repo,
       starId,
       handle: star?.handle ?? null,
-      title:
-        session.target.kind === 'session' ? session.target.title || null : (star?.title ?? null),
+      title: star?.title ?? null,
       reason,
       since: session.since,
     });
