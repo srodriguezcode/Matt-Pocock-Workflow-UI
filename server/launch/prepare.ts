@@ -23,7 +23,8 @@ export async function prepareStart(
   options: { fresh?: boolean } = {},
 ): Promise<{ result: PlanResult; tracker: Tracker; sky: Sky }> {
   const tracker = await trackerFor(deps, repo);
-  const always = target.kind === 'ticket' || target.kind === 'system';
+  const always =
+    target.kind === 'ticket' || target.kind === 'system' || target.kind === 'architecture';
   const early = always
     ? Promise.all([originBranches(deps.runner, repo.path), localState(deps.runner, repo.path)])
     : Promise.resolve([NO_ORIGIN, NO_LOCAL] as const);

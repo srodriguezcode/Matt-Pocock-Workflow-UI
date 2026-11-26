@@ -20,6 +20,18 @@ export function worktreeAdd(path: string, branch: string, base: string | null): 
   return { command: 'git', args: ['worktree', 'add', path, ...from] };
 }
 
+export const worktreeDetach = (path: string, base: string): Cmd => ({
+  command: 'git',
+  args: ['worktree', 'add', '--detach', path, `origin/${base}`],
+});
+
+/** Drops tracked edits and untracked files, keeping ignored ones such as `node_modules`. */
+export const worktreeReset = (path: string, base: string): Cmd[] => [
+  { command: 'git', args: ['-C', path, 'reset', '--hard'] },
+  { command: 'git', args: ['-C', path, 'clean', '-fd'] },
+  { command: 'git', args: ['-C', path, 'checkout', '--detach', `origin/${base}`] },
+];
+
 export const worktreeRemove = (path: string): Cmd => ({
   command: 'git',
   args: ['worktree', 'remove', '--force', path],

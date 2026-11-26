@@ -16,14 +16,15 @@ function planFor(
   target: LaunchTarget,
   s: Sky,
   local: PlanInput['local'] = { branches: [], worktrees: [] },
+  base: string | null = null,
 ): LaunchPlan {
   const result = planStart({
     sky: s,
     option: startable(target),
     repo: repo(),
     target,
-    base: null,
-    origin: { branches: ['main'], defaultBranch: 'main' },
+    base,
+    origin: { branches: ['main', 'develop'], defaultBranch: 'main' },
     local,
     commands: {
       reread: (id) => `reread ${id}`,
@@ -276,10 +277,52 @@ describe('Decision and Map Starts', () => {
 });
 
 describe('Architecture Start', () => {
-  it('opens the tab in the main checkout and registers no Session', async () => {
+  const review = '/code/app.worktrees/architecture';
+  const architecture = (local?: PlanInput['local'], base: string | null = null) =>
+    planFor({ kind: 'architecture' }, sky({}), local, base);
+
+  it('adds a detached worktree, opens the tab there and registers no Session', async () => {
     const w = world();
     w.runner.on(['osascript'], { stdout: 'ABC-123\n' });
-    const events = await collect(planFor({ kind: 'architecture' }, sky({})), w);
+    const events = await collect(architecture(), w);
     expect(last(events)).toMatchObject({ ok: true, outcome: { code: 'opened' } });
+    expect(w.runner.lines().slice(0, 3)).toEqual([
+      'git ls-remote --exit-code --heads origin main',
+      'git fetch origin',
+      `git worktree add --detach ${review} origin/main`,
+    ]);
+    expect(w.runner.lines()[3]).toContain(`cd ${review} && claude`);
+    expect(w.runner.lines().some((line) => line.startsWith('git branch'))).toBe(false);
+  });
+
+  it('resets the existing worktree to another Base without making a branch', async () => {
+    const w = world();
+    w.runner.on(['git', '-C'], {});
+    const events = await collect(architecture({ branches: [], worktrees: [review] }, 'develop'), w);
+    expect(last(events)).toMatchObject({ ok: true, outcome: { code: 'opened' } });
+    expect(w.runner.lines().slice(0, 5)).toEqual([
+      'git ls-remote --exit-code --heads origin develop',
+      'git fetch origin',
+      `git -C ${review} reset --hard`,
+      `git -C ${review} clean -fd`,
+      `git -C ${review} checkout --detach origin/develop`,
+    ]);
+    expect(w.runner.lines().some((line) => /^git (branch|worktree add)/.test(line))).toBe(false);
+  });
+
+  it('resets the existing worktree and keeps it when the tab fails to open', async () => {
+    const w = world();
+    w.runner.on(['git', '-C'], {}).on(['osascript'], { code: 1, stderr: 'no iTerm' });
+    const events = await collect(architecture({ branches: [], worktrees: [review] }), w);
+    expect(w.runner.lines().slice(2, 5)).toEqual([
+      `git -C ${review} reset --hard`,
+      `git -C ${review} clean -fd`,
+      `git -C ${review} checkout --detach origin/main`,
+    ]);
+    expect(rollbacks(events)).toEqual([]);
+    expect(last(events)).toMatchObject({
+      ok: false,
+      outcome: { code: 'step-failed', rollback: 'nothing-changed' },
+    });
   });
 });
