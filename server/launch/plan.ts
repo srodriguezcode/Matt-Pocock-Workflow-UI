@@ -24,7 +24,7 @@ import {
   worktreeReset,
   type SessionLink,
 } from './commands.ts';
-import { encodeTarget } from '#server/session/target.ts';
+import { encodeTarget, linkedTarget, newSessionLine } from '#server/session/target.ts';
 import { ticketsOf } from '#server/sky/frontier.ts';
 import { splitPrompt } from './split.ts';
 import { tmuxName, tmuxOpen } from './tmux.ts';
@@ -55,11 +55,9 @@ export interface PlanInput {
 /** What a Start in the main checkout reads. It needs no Sky and claims nothing. */
 type CheckoutInput = Pick<PlanInput, 'repo' | 'target' | 'link' | 'runtime'>;
 
-/** A new session on the repo: plain `claude`, or its first message, with an optional skill before it. */
+/** A new session on the repo: plain `claude`, or its first line. The board follows it like a star's. */
 export function planSession(input: CheckoutInput & { target: SessionTarget }): PlanResult {
-  const { skill, prompt } = input.target;
-  const line = [skill ? `/${skill}` : '', prompt?.trim() ?? ''].filter(Boolean).join(' ');
-  return mainCheckout(input, noClaims, line);
+  return mainCheckout(input, noClaims, newSessionLine(input.target));
 }
 
 export function planStart(input: PlanInput): PlanResult {
@@ -254,8 +252,12 @@ const fetchStep: PlanStep = {
 };
 
 function sessionLink({ link, repo, target }: CheckoutInput): SessionLink | null {
-  if (!link || !('id' in target)) return null;
-  return { settingsPath: link.settingsPath, target: encodeTarget({ repo: repo.path, target }) };
+  const linked = linkedTarget(target);
+  if (!link || !linked) return null;
+  return {
+    settingsPath: link.settingsPath,
+    target: encodeTarget({ repo: repo.path, target: linked }),
+  };
 }
 
 function claimed(input: PlanInput, claims: IssueRef[], beforeClaim: PlanStep[]): Claimed {

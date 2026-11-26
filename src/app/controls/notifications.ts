@@ -11,6 +11,7 @@ import { I18nService } from '@app/i18n/i18n.service';
 import { Dismissals } from '@app/session/dismissals';
 import { notificationsOf, type Notification } from '@app/session/notifications';
 import { SessionDialog } from '@app/session/session-dialog';
+import { RepoSessions } from '@app/session/repo-sessions';
 import { SessionLink } from '@app/session/session-link';
 import { SkyView } from '@app/sky/sky-view';
 import { Board } from '@app/state/board';
@@ -38,6 +39,7 @@ export class Notifications {
   private readonly skyView = inject(SkyView);
   private readonly dismissals = inject(Dismissals);
   private readonly dialog = inject(SessionDialog);
+  private readonly repoSessions = inject(RepoSessions);
   private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
   protected readonly i18n = inject(I18nService);
   protected readonly open = signal(false);
@@ -57,7 +59,8 @@ export class Notifications {
     this.skyView.select(null);
     if (this.board.activePath() !== item.repo) await this.board.switchTo(item.repo);
     await new Promise((done) => requestAnimationFrame(() => requestAnimationFrame(done)));
-    this.skyView.flyTo(item.starId);
+    if (item.starId === null) this.repoSessions.open(item.sessionId);
+    else this.skyView.flyTo(item.starId);
     if (item.reason !== 'permission') this.dialog.open(item.sessionId);
   }
 

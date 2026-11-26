@@ -25,3 +25,22 @@ describe('liveTargets', () => {
     expect(hub.liveTargets()).toEqual([{ repo: REPO, target: { kind: 'ticket', id: '1' } }]);
   });
 });
+
+describe('a new session', () => {
+  const fresh = testHub();
+  afterEach(() => fresh.stop());
+  const session = (key: string): LinkTarget => ({
+    repo: REPO,
+    target: { kind: 'session', key, title: `idea ${key}` },
+  });
+
+  it('links by its key, keeps two side by side, and holds no star', async () => {
+    await fresh.hook(encodeTarget(session('k1')), { ...prompt('a'), cwd: REPO }, signal);
+    await fresh.hook(encodeTarget(session('k2')), { ...prompt('b'), cwd: REPO }, signal);
+    expect(fresh.snapshot().map((s) => [s.sessionId, s.target])).toEqual([
+      ['a', { kind: 'session', key: 'k1', title: 'idea k1' }],
+      ['b', { kind: 'session', key: 'k2', title: 'idea k2' }],
+    ]);
+    expect(fresh.liveTargets()).toEqual([]);
+  });
+});

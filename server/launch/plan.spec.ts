@@ -400,8 +400,22 @@ describe('.scratch/ Starts', () => {
 });
 
 describe('New session Start', () => {
+  /** Unlinked, so the line shows only what the box and the skill add. */
   const session = (fields: { prompt?: string; skill?: 'to-spec' }) =>
-    plan({ sky: sky({}), target: { kind: 'session', key: 'k1', ...fields }, option: undefined });
+    plan({
+      sky: sky({}),
+      target: { kind: 'session', key: 'k1', ...fields },
+      option: undefined,
+      link: null,
+    });
+
+  it('links the session to the board by its key and first line', () => {
+    const target = { kind: 'session', key: 'k1', prompt: 'Add dark mode' } as const;
+    const p = plan({ sky: sky({}), target, option: undefined });
+    expect(p.command).toBe(
+      `cd /code/app && UAW_TARGET='repo=%2Fcode%2Fapp&kind=session&key=k1&title=Add+dark+mode' claude ${SETTINGS} "Add dark mode"`,
+    );
+  });
 
   it('opens plain claude in the main checkout when the box is empty and no skill is picked', () => {
     const p = session({});

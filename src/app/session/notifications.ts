@@ -1,5 +1,6 @@
 import type { RepoConfig } from '@contract/repo';
 import type { SessionView } from '@contract/session';
+import { starIdOf } from './place';
 import type { Sky } from '@contract/sky';
 
 export type NotificationReason = 'ask' | 'round' | 'reply' | 'permission' | 'finished';
@@ -9,8 +10,12 @@ export interface Notification {
   sessionId: string;
   repo: string;
   repoName: string;
-  starId: string;
-  /** The star's handle and title when its repo's sky is loaded, else `null`. */
+  /** `null` for a new session: it opens in the panel, not on a star. */
+  starId: string | null;
+  /**
+   * The star's handle and title when its repo's sky is loaded, else `null`.
+   * A new session has no handle, and its title is its first line.
+   */
   handle: string | null;
   title: string | null;
   reason: NotificationReason;
@@ -29,7 +34,7 @@ export function notificationsOf(
     const reason = reasonOf(session, sky);
     if (!reason) continue;
     const repo = repos.find((r) => r.path === session.repo);
-    const starId = placedOn(session, active) ?? session.target.id;
+    const starId = placedOn(session, active) ?? starIdOf(session.target);
     const star = sky
       ? (sky.tickets.find((t) => t.id === starId) ??
         sky.systems.find((s) => s.id === starId) ??
@@ -41,7 +46,8 @@ export function notificationsOf(
       repoName: repo?.name ?? session.repo,
       starId,
       handle: star?.handle ?? null,
-      title: star?.title ?? null,
+      title:
+        session.target.kind === 'session' ? session.target.title || null : (star?.title ?? null),
       reason,
       since: session.since,
     });
@@ -54,7 +60,8 @@ function reasonOf(session: SessionView, sky: Sky | null): NotificationReason | n
   if (session.state === 'asking') return kind === 'round' ? 'round' : 'ask';
   if (session.state !== 'waiting') return null;
   if (session.waiting === 'permission-prompt') return 'permission';
-  return sky && isClosed(session.target.id, sky) ? 'finished' : 'reply';
+  const id = starIdOf(session.target);
+  return sky && id !== null && isClosed(id, sky) ? 'finished' : 'reply';
 }
 
 /** The sky holds every open issue, so a target missing from it is closed. */

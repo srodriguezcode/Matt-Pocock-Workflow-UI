@@ -83,7 +83,8 @@ describe('prepareStart', () => {
     const { result, sky } = await prepareStart(deps(runner, {}, own.path), own, target, null);
     if (!result.ok) throw new Error(result.reason.code);
     expect(sky).toBeNull();
-    expect(result.plan.command).toBe(`cd ${own.path} && claude "hi"`);
+    expect(result.plan.command).toMatch(/ "hi"$/);
+    expect(result.plan.command).toContain('kind=session&key=k1&title=hi');
     expect(runner.calls).toEqual([]);
   });
 

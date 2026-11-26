@@ -1,6 +1,7 @@
 import { dirname, join } from 'node:path';
 import type { FileSystem } from '#server/core/fs.ts';
 import type { Launch } from './identity.ts';
+import type { LinkedTarget } from '@contract/launch';
 import { isStarKind } from './target.ts';
 
 export interface LaunchStore {
@@ -37,8 +38,15 @@ function isLaunch(value: unknown): value is Launch {
   return (
     typeof launch?.repo === 'string' &&
     typeof launch.cwd === 'string' &&
-    typeof launch.target?.id === 'string' &&
-    isStarKind(launch.target.kind) &&
+    isTarget(launch.target) &&
     (typeof launch.terminal === 'string' || launch.terminal === null)
   );
+}
+
+function isTarget(value: unknown): value is LinkedTarget {
+  const target = value as { kind?: unknown; id?: unknown; key?: unknown; title?: unknown } | null;
+  if (target?.kind === 'session') {
+    return typeof target.key === 'string' && typeof target.title === 'string';
+  }
+  return typeof target?.id === 'string' && isStarKind(target.kind);
 }

@@ -5,4 +5,7 @@ export const newSession = {
   promptPlaceholder: 'Type your idea. Leave this empty to open Claude with no message.',
   skillLabel: 'Skill',
   noSkill: 'No skill',
+  listLabel: (count: number) => (count === 1 ? '1 new session' : `${count} new sessions`),
+  listHeading: 'New sessions',
+  noMessage: 'No first message',
 };

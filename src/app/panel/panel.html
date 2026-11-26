@@ -1,7 +1,13 @@
 @let m = i18n.messages().board.panel;
 @let r = reading();
 
-@if (open()) {
+@if (repoSession(); as s) {
+  <button type="button" class="close" [attr.aria-label]="m.close" (click)="close()">×</button>
+  <div class="head">
+    <h2>{{ s.target.title || i18n.messages().board.newSession.noMessage }}</h2>
+  </div>
+  <app-session [sessionId]="s.sessionId" />
+} @else if (open()) {
   <button type="button" class="close" [attr.aria-label]="m.close" (click)="close()">×</button>
 
   @if ('issue' in r) {

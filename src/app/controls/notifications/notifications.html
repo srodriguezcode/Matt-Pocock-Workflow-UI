@@ -26,7 +26,7 @@
         <button type="button" class="item" role="menuitem" (click)="go(item)">
           <span class="where">
             <span class="repo">{{ item.repoName }}</span>
-            <span class="star">{{ item.handle ?? item.starId }}</span>
+            <span class="star">{{ item.handle ?? item.starId ?? m.newSession }}</span>
             @if (item.title; as title) {
               <span class="title">{{ title }}</span>
             }

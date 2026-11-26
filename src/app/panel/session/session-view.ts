@@ -13,13 +13,13 @@ export interface SessionLine {
 
 export function sessionLine(
   placed: Placed,
-  sky: Sky,
+  sky: Sky | null,
   now: number,
   gone: boolean,
   text: SessionText,
 ): SessionLine {
   if (placed.sharedFrom !== null) {
-    const system = sky.systems.find((s) => s.id === placed.sharedFrom);
+    const system = sky?.systems.find((s) => s.id === placed.sharedFrom);
     return {
       line: null,
       notes: [text.sharedSession(system?.handle ?? placed.sharedFrom)],

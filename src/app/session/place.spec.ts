@@ -113,3 +113,12 @@ describe('placeSessions', () => {
     });
   });
 });
+
+describe('placeSessions with a new session', () => {
+  it('puts it on no star', () => {
+    const fresh = session('n', 'ticket', '1', {
+      target: { kind: 'session', key: 'k1', title: '' },
+    });
+    expect(placeSessions(sky([ticket('1')]), [fresh]).size).toBe(0);
+  });
+});

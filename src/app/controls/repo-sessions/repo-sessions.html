@@ -1,0 +1,32 @@
+@let m = i18n.messages().board.newSession;
+@let states = i18n.messages().board.session.states;
+@let all = list();
+@if (all.length > 0) {
+  <button
+    type="button"
+    class="toggle"
+    [class.asking]="waiting()"
+    [attr.aria-expanded]="open()"
+    [attr.aria-label]="m.listLabel(all.length)"
+    [title]="m.listLabel(all.length)"
+    (click)="toggle()"
+  >
+    <svg viewBox="0 0 16 16" aria-hidden="true">
+      <path d="M2.5 3.5h11v7h-6l-3 2.5v-2.5h-2z" />
+    </svg>
+    <span class="count">{{ all.length }}</span>
+  </button>
+  @if (open()) {
+    <div class="list" role="menu">
+      <h3>{{ m.listHeading }}</h3>
+      @for (s of all; track s.sessionId) {
+        <button type="button" class="item" role="menuitem" (click)="go(s.sessionId)">
+          <span class="title">{{ s.target.title || m.noMessage }}</span>
+          <span class="state" [class.asking]="s.state === 'asking' || s.state === 'waiting'">
+            {{ states[s.state] }}
+          </span>
+        </button>
+      }
+    </div>
+  }
+}

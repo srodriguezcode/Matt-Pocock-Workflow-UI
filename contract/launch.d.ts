@@ -24,6 +24,16 @@ export interface StarTarget {
 
 export type LaunchTarget = StarTarget | { kind: 'architecture' } | SessionTarget;
 
+/** A new session as the board follows it. `title` is its first line cut short, `''` when empty. */
+export interface NewSessionRef {
+  kind: 'session';
+  key: string;
+  title: string;
+}
+
+/** What a linked Session belongs to: a star, or a new session on the repo. */
+export type LinkedTarget = StarTarget | NewSessionRef;
+
 /** `count` is the tickets a Frontier system starts. */
 export type StartLabel =
   | { code: 'ticket' }

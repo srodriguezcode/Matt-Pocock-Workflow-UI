@@ -5,7 +5,7 @@
       <div class="head">
         <h3>{{ m.heading }}</h3>
         @if (!v.shared) {
-          <app-peek [session]="p.session" [starId]="id()" />
+          <app-peek [session]="p.session" [starId]="id() ?? p.session.sessionId" />
         }
       </div>
       @if (v.line) {
