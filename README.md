@@ -37,6 +37,9 @@ The board draws the whole issue graph as a space sky. With the board you can:
 - Answer grilling rounds.
 - Manage many Sessions in one or more projects at the same time. The board tells you when an agent needs you.
 
+> [!TIP]
+> **[Try the live demo](https://srodriguezcode.github.io/Matt-Pocock-Workflow-UI/).** It runs in your browser on two sample repos, with no install. It can't start Sessions.
+
 ## Requirements
 
 Run the board on a Mac, or as a Docker image. The image needs Docker, a GitHub token and a Claude login. See [Run in Docker](#run-in-docker).
