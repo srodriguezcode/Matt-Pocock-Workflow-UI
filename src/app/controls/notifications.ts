@@ -9,6 +9,7 @@ import {
 } from '@angular/core';
 import { I18nService } from '@app/i18n/i18n.service';
 import { Dismissals } from '@app/session/dismissals';
+import { noticeKey, unseen } from '@app/session/notice-key';
 import { notificationsOf, type Notification } from '@app/session/notifications';
 import { SessionDialog } from '@app/session/session-dialog';
 import { RepoSessions } from '@app/session/repo-sessions';
@@ -45,6 +46,13 @@ export class Notifications {
   protected readonly open = signal(false);
 
   protected readonly items = notificationItems();
+  /** Opened in Peek, so listed but no longer counted. */
+  protected readonly seen = this.dismissals.seen;
+  protected readonly count = computed(() => unseen(this.items(), this.seen()).length);
+
+  protected isSeen(item: Notification): boolean {
+    return this.seen().has(noticeKey(item));
+  }
 
   protected toggle(): void {
     this.open.update((open) => !open);
