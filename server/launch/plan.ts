@@ -134,9 +134,7 @@ function inWorktree(
 ): PlanResult {
   const { repo, local } = input;
   const base = resolveBase(input, star);
-  if (!input.origin.branches.includes(base.branch)) {
-    return { ok: false, reason: { code: 'base-missing', branch: base.branch } };
-  }
+  if (!input.origin.branches.includes(base.branch)) return baseMissing(base.branch);
   const branch = `${prefixFor(repo, star)}/${input.commands.branchSlug(star)}`;
   const worktree = join(worktreeDir(repo), branch);
   const reuse = {
@@ -179,15 +177,13 @@ function inWorktree(
 /** One fixed worktree, detached at the Base, so the review never moves the main checkout. */
 function architectureWorktree(input: PlanInput): PlanResult {
   const base = resolveBase(input, null);
-  if (!input.origin.branches.includes(base.branch)) {
-    return { ok: false, reason: { code: 'base-missing', branch: base.branch } };
-  }
+  if (!input.origin.branches.includes(base.branch)) return baseMissing(base.branch);
   const skill = '/improve-codebase-architecture';
   const worktree = join(worktreeDir(input.repo), 'architecture');
-  const reused = input.local.worktrees.includes(worktree);
+  const reuse = input.local.worktrees.includes(worktree);
   const command = commandFor(input, worktree, skill);
   const tmux = tmuxFor(input);
-  const worktreeStep: PlanStep = reused
+  const worktreeStep: PlanStep = reuse
     ? {
         key: 'worktree',
         action: { code: 'worktree-reset', base: base.branch },
@@ -204,7 +200,7 @@ function architectureWorktree(input: PlanInput): PlanResult {
     base,
     branch: null,
     worktree,
-    reuse: { branch: false, worktree: reused },
+    reuse: { branch: false, worktree: reuse },
     cwd: worktree,
     command,
     tmux,
@@ -212,6 +208,10 @@ function architectureWorktree(input: PlanInput): PlanResult {
     steps: [baseStep(base.branch), fetchStep, worktreeStep, terminalStep(command, tmux)],
   };
   return { ok: true, plan };
+}
+
+function baseMissing(branch: string): PlanResult {
+  return { ok: false, reason: { code: 'base-missing', branch } };
 }
 
 function baseStep(branch: string): PlanStep {
@@ -269,11 +269,13 @@ function resolveBase(input: PlanInput, star: IssueRef | null): NonNullable<Launc
   const { sky, repo } = input;
   if (input.base) return { branch: input.base, source: 'override', systemId: null };
   const bySystem = new Map(sky.systems.map((s) => [s.id, s]));
-  const ticket = star && sky.tickets.find((t) => t.id === star.id);
-  let system = star ? bySystem.get(ticket ? (ticket.systemId ?? '') : star.id) : undefined;
-  while (system) {
-    if (system.base) return { branch: system.base, source: 'system', systemId: system.id };
-    system = bySystem.get(system.parentId ?? '');
+  if (star) {
+    const ticket = sky.tickets.find((t) => t.id === star.id);
+    let system = bySystem.get(ticket ? (ticket.systemId ?? '') : star.id);
+    while (system) {
+      if (system.base) return { branch: system.base, source: 'system', systemId: system.id };
+      system = bySystem.get(system.parentId ?? '');
+    }
   }
   if (repo.baseBranch) return { branch: repo.baseBranch, source: 'repo', systemId: null };
   return { branch: input.origin.defaultBranch, source: 'default', systemId: null };

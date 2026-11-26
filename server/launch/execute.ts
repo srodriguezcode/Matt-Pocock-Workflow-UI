@@ -112,7 +112,7 @@ export async function* executeStart(
     },
     worktree: async ({ action }) => {
       if (!plan.worktree) return null;
-      /** A running review may hold this worktree, so a failed Start leaves it in place. */
+      /** A running architecture review may hold this worktree, so a failed Start leaves it in place. */
       if (action.code === 'worktree-reset') {
         for (const cmd of worktreeReset(plan.worktree, action.base)) await run(cmd);
         return null;

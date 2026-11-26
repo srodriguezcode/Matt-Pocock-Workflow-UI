@@ -319,7 +319,9 @@ describe('Architecture Start', () => {
   it('takes the picked Base over the repo Base', () => {
     const p = architecture({ repo: repo({ baseBranch: 'develop' }), base: 'release' });
     expect(p.base).toEqual({ branch: 'release', source: 'override', systemId: null });
-    expect(p.steps[2]!.commands).toEqual([`git worktree add --detach ${review} origin/release`]);
+    expect(p.steps.find((s) => s.key === 'worktree')?.commands).toEqual([
+      `git worktree add --detach ${review} origin/release`,
+    ]);
   });
 
   it('refuses a Base that origin lacks', () => {
@@ -330,7 +332,7 @@ describe('Architecture Start', () => {
   it('resets the existing review worktree to the Base instead of adding one', () => {
     const p = architecture({ base: 'develop', local: { branches: [], worktrees: [review] } });
     expect(p.reuse).toEqual({ branch: false, worktree: true });
-    expect(p.steps[2]).toEqual({
+    expect(p.steps.find((s) => s.key === 'worktree')).toEqual({
       key: 'worktree',
       action: { code: 'worktree-reset', base: 'develop' },
       commands: [

@@ -84,8 +84,11 @@ describe('English wording of plan steps', () => {
         { code: 'worktree-new', branch: 'feature/613', base: 'main' },
         'Worktree feature/613 off origin/main',
       ],
-      [{ code: 'worktree-detach', base: 'main' }, 'Review worktree at origin/main, no branch'],
-      [{ code: 'worktree-reset', base: 'main' }, 'Reset the review worktree to origin/main'],
+      [
+        { code: 'worktree-detach', base: 'main' },
+        'Architecture worktree at origin/main, no branch',
+      ],
+      [{ code: 'worktree-reset', base: 'main' }, 'Reset the architecture worktree to origin/main'],
       [{ code: 'open-tab' }, 'Open an iTerm2 tab'],
     ];
     expect(cases.map(([action]) => word(codes.stepActions, action))).toEqual(
