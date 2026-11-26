@@ -59,8 +59,11 @@ export class Notifications {
     this.skyView.select(null);
     if (this.board.activePath() !== item.repo) await this.board.switchTo(item.repo);
     await new Promise((done) => requestAnimationFrame(() => requestAnimationFrame(done)));
-    if (item.starId === null) this.repoSessions.open(item.sessionId);
-    else this.skyView.flyTo(item.starId);
+    if (item.starId === null) {
+      this.repoSessions.open(item.sessionId);
+      return;
+    }
+    this.skyView.flyTo(item.starId);
     if (item.reason !== 'permission') this.dialog.open(item.sessionId);
   }
 

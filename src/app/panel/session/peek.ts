@@ -7,6 +7,7 @@ import {
   inject,
   input,
   linkedSignal,
+  output,
   signal,
   untracked,
   viewChild,
@@ -36,6 +37,9 @@ export class Peek {
   readonly session = input.required<SessionView>();
   /** The selected star. Selecting one whose Session is Asking opens the dialog over its panel. */
   readonly starId = input.required<string>();
+  /** Off for a new session: no panel holds a button, so the dialog opens on request alone. */
+  readonly trigger = input(true);
+  readonly closed = output<void>();
   private readonly notes = inject(AnswerNotes);
   private readonly requests = inject(SessionDialog);
   private autoOpen = false;
@@ -94,6 +98,11 @@ export class Peek {
     if (!dialog || dialog.open) return;
     this.open.set(true);
     dialog.showModal();
+  }
+
+  protected onClose(): void {
+    this.open.set(false);
+    this.closed.emit();
   }
 
   protected close(): void {

@@ -30,3 +30,6 @@
     </div>
   }
 }
+@if (opened(); as s) {
+  <app-peek [session]="s" [starId]="s.sessionId" [trigger]="false" (closed)="closePeek()" />
+}

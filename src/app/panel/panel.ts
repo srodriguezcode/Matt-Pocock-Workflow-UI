@@ -5,7 +5,6 @@ import { Api, ApiFailure } from '@app/api/api';
 import { word } from '@app/i18n/word';
 import { I18nService } from '@app/i18n/i18n.service';
 import { apiFailureText } from '@app/i18n/api-failure';
-import { RepoSessions } from '@app/session/repo-sessions';
 import { SessionLink } from '@app/session/session-link';
 import { SkyView } from '@app/sky/sky-view';
 import { Board } from '@app/state/board';
@@ -29,8 +28,6 @@ export class Panel {
   private readonly issueDetails = inject(IssueDetails);
   private readonly skyView = inject(SkyView);
   private readonly sessionLink = inject(SessionLink);
-  private readonly repoSessions = inject(RepoSessions);
-  protected readonly repoSession = this.repoSessions.opened;
   protected readonly i18n = inject(I18nService);
 
   private readonly sky = this.board.sky;
@@ -63,9 +60,7 @@ export class Panel {
     const detail = this.detail.hasValue() ? this.detail.value() : null;
     return detail?.id === issue.id ? detail.labels : null;
   });
-  protected readonly open = computed(
-    () => this.reading().kind !== 'none' || this.repoSession() !== null,
-  );
+  protected readonly open = computed(() => this.reading().kind !== 'none');
   protected readonly goneClosed = computed(
     () =>
       this.reading().kind === 'gone' &&
@@ -137,7 +132,6 @@ export class Panel {
   }
 
   protected close(): void {
-    this.repoSessions.close();
     this.offsky.set(null);
     this.skyView.select(null);
   }

@@ -1,10 +1,12 @@
 import { Component, computed, ElementRef, HostListener, inject, signal } from '@angular/core';
 import { I18nService } from '@app/i18n/i18n.service';
+import { Peek } from '@app/panel/session/peek';
 import { RepoSessions } from '@app/session/repo-sessions';
 
-/** Hidden while the active repo has no live new session. */
+/** The list hides while the active repo has no live new session. The open Peek outlives it. */
 @Component({
   selector: 'app-repo-sessions',
+  imports: [Peek],
   templateUrl: './repo-sessions/repo-sessions.html',
   styleUrl: './repo-sessions/repo-sessions.scss',
 })
@@ -13,6 +15,7 @@ export class RepoSessionList {
   private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
   protected readonly i18n = inject(I18nService);
   protected readonly list = this.sessions.list;
+  protected readonly opened = this.sessions.opened;
   protected readonly open = signal(false);
   protected readonly waiting = computed(() =>
     this.list().some((s) => s.state === 'asking' || s.state === 'waiting'),
@@ -25,6 +28,10 @@ export class RepoSessionList {
   protected go(sessionId: string): void {
     this.open.set(false);
     this.sessions.open(sessionId);
+  }
+
+  protected closePeek(): void {
+    this.sessions.close();
   }
 
   @HostListener('document:click', ['$event'])

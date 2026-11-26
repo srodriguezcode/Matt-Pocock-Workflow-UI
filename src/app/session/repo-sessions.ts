@@ -1,15 +1,15 @@
-import { computed, effect, inject, Injectable, signal, untracked } from '@angular/core';
-import { SkyView } from '@app/sky/sky-view';
+import { computed, inject, Injectable, signal } from '@angular/core';
 import { Board } from '@app/state/board';
 import { repoSessionsOf, type RepoSession } from './repo-session-list';
+import { SessionDialog } from './session-dialog';
 import { SessionLink } from './session-link';
 
-/** New sessions show on no star, so the panel opens one by its session id instead. */
+/** New sessions show on no star, so one opens straight into its Peek dialog. */
 @Injectable({ providedIn: 'root' })
 export class RepoSessions {
   private readonly link = inject(SessionLink);
   private readonly board = inject(Board);
-  private readonly view = inject(SkyView);
+  private readonly dialog = inject(SessionDialog);
 
   readonly list = computed(() =>
     repoSessionsOf(this.link.sessions().values(), this.board.activePath()),
@@ -24,15 +24,9 @@ export class RepoSessions {
       : null;
   });
 
-  constructor() {
-    effect(() => {
-      if (this.view.selection() !== null) untracked(() => this.openedId.set(null));
-    });
-  }
-
   open(sessionId: string): void {
-    this.view.select(null);
     this.openedId.set(sessionId);
+    this.dialog.open(sessionId);
   }
 
   close(): void {

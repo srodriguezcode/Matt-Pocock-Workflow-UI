@@ -1,8 +1,10 @@
 @let m = i18n.messages().board.session;
-<button type="button" class="open" [class.asking]="asking()" (click)="show()">
-  {{ m.peek.heading }}
-</button>
-<dialog #dialog [class.large]="large()" (close)="open.set(false)" (click)="closeOnBackdrop($event)">
+@if (trigger()) {
+  <button type="button" class="open" [class.asking]="asking()" (click)="show()">
+    {{ m.peek.heading }}
+  </button>
+}
+<dialog #dialog [class.large]="large()" (close)="onClose()" (click)="closeOnBackdrop($event)">
   @if (open()) {
     <header>
       <strong>{{ m.peek.heading }}</strong>
