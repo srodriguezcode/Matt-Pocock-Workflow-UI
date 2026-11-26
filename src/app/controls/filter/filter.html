@@ -1,0 +1,43 @@
+@let m = i18n.messages().board.filter;
+@if (rows().length) {
+  <button
+    type="button"
+    class="icon"
+    [class.filtered]="filtered()"
+    [title]="m.title"
+    [attr.aria-label]="m.title"
+    [attr.aria-expanded]="open()"
+    (click)="toggle()"
+  >
+    <svg
+      width="16"
+      height="16"
+      viewBox="0 0 16 16"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="1.6"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    >
+      <path d="M2 3h12L9.5 8.5V13l-3-1.5v-3z" />
+    </svg>
+    <span class="label">{{ i18n.messages().board.layout.menu.filter }}</span>
+  </button>
+  @if (open()) {
+    <div class="popover">
+      @for (row of rows(); track row.key) {
+        <label class="row">
+          <input #box type="checkbox" [checked]="row.shown" (change)="set(row.key, box.checked)" />
+          <span class="dot" [class]="row.tone"></span>
+          <span class="name">{{ row.name }}</span>
+          <span class="count">{{ row.count }}</span>
+        </label>
+      }
+      <div class="foot">
+        <button type="button" (click)="toggleAll()">
+          {{ allHidden() ? m.markAll : m.unmarkAll }}
+        </button>
+      </div>
+    </div>
+  }
+}

@@ -1,0 +1,52 @@
+@let m = i18n.messages().board.session.notifications;
+@let list = items();
+<button
+  type="button"
+  class="bell"
+  [class.lit]="list.length > 0"
+  [attr.aria-expanded]="open()"
+  [attr.aria-label]="m.label(list.length)"
+  [title]="m.label(list.length)"
+  (click)="toggle()"
+>
+  <svg viewBox="0 0 16 16" aria-hidden="true">
+    <path d="M4 11V7a4 4 0 0 1 8 0v4l1.5 1.5h-11z" />
+    <path d="M6.5 14a1.5 1.5 0 0 0 3 0" />
+  </svg>
+  <span class="label">{{ i18n.messages().board.layout.menu.notifications }}</span>
+  @if (list.length > 0) {
+    <span class="count">{{ list.length }}</span>
+  }
+</button>
+@if (open()) {
+  <div class="list" role="menu">
+    <h3>{{ m.heading }}</h3>
+    @for (item of list; track item.sessionId) {
+      <div class="row">
+        <button type="button" class="item" role="menuitem" (click)="go(item)">
+          <span class="where">
+            <span class="repo">{{ item.repoName }}</span>
+            <span class="star">{{ item.handle ?? item.starId }}</span>
+            @if (item.title; as title) {
+              <span class="title">{{ title }}</span>
+            }
+          </span>
+          <span class="reason" [class.asking]="item.reason === 'ask' || item.reason === 'round'">
+            {{ m.reasons[item.reason] }}
+          </span>
+        </button>
+        <button
+          type="button"
+          class="dismiss"
+          [attr.aria-label]="m.dismiss"
+          [title]="m.dismiss"
+          (click)="dismiss(item, $event)"
+        >
+          ×
+        </button>
+      </div>
+    } @empty {
+      <p class="empty">{{ m.empty }}</p>
+    }
+  </div>
+}

@@ -1,0 +1,21 @@
+@if (gaps().length) {
+  <button type="button" class="icon" [attr.aria-expanded]="open()" (click)="toggle()">
+    <svg
+      width="15"
+      height="15"
+      viewBox="0 0 16 16"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="1.6"
+      stroke-linejoin="round"
+    >
+      <path d="M8 1.8 15 14H1z" />
+      <path d="M8 6.5v3.2M8 11.6v.2" stroke-linecap="round" />
+    </svg>
+  </button>
+  @if (open()) {
+    <div class="popover">
+      <app-gap-list [gaps]="gaps()" />
+    </div>
+  }
+}

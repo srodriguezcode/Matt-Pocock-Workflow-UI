@@ -1,0 +1,41 @@
+:host {
+  display: grid;
+  grid-template-columns: var(--rail-width) 1fr auto;
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+}
+
+.stage {
+  position: relative;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.sky,
+.empty {
+  position: absolute;
+  inset: 0;
+}
+
+.controls {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.corner {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  display: flex;
+  gap: 8px;
+}
+
+.repo-name {
+  font-weight: 600;
+  color: var(--text);
+}

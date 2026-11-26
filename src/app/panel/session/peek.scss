@@ -1,0 +1,260 @@
+:host {
+  margin-left: auto;
+}
+.open {
+  font: inherit;
+  padding: 4px 10px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: var(--kbd-bg);
+  color: var(--text);
+  cursor: pointer;
+}
+dialog {
+  width: min(720px, 94vw);
+  height: min(80vh, 760px);
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--bg);
+  color: var(--text);
+}
+dialog[open] {
+  display: flex;
+  flex-direction: column;
+}
+dialog::backdrop {
+  background: var(--backdrop);
+}
+header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border-soft);
+}
+.state {
+  font-size: 12px;
+  color: var(--muted);
+  text-transform: capitalize;
+}
+.close {
+  margin-left: auto;
+  background: none;
+  border: 0;
+  color: var(--muted);
+  font-size: 20px;
+  cursor: pointer;
+}
+.history {
+  flex: 1;
+  overflow: auto;
+  padding: 14px;
+}
+form {
+  display: flex;
+  gap: 8px;
+  padding: 10px 14px;
+  flex-wrap: wrap;
+}
+textarea {
+  flex: 1;
+  min-height: 44px;
+  resize: vertical;
+  font: inherit;
+  padding: 8px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: var(--chrome);
+  color: var(--text);
+}
+form button {
+  align-self: stretch;
+  min-width: 72px;
+  border: 0;
+  border-radius: 6px;
+  background: var(--go);
+  color: var(--go-text);
+  font: inherit;
+  cursor: pointer;
+}
+form button:disabled {
+  background: var(--disabled);
+  color: var(--disabled-text);
+}
+.error {
+  width: 100%;
+  color: var(--danger-text);
+  margin: 0;
+}
+.muted {
+  color: var(--muted);
+}
+.at {
+  font-size: 11px;
+  color: var(--muted);
+}
+.md :first-child {
+  margin-top: 0;
+}
+.md :last-child {
+  margin-bottom: 0;
+}
+.history {
+  font:
+    12px/1.55 ui-monospace,
+    Menlo,
+    monospace;
+  background: var(--rail-bg);
+}
+.rule {
+  color: var(--muted);
+  border-top: 1px dashed var(--border-soft);
+  margin: 10px 0 4px;
+  font-size: 10px;
+  text-transform: uppercase;
+}
+.row {
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+.row .at {
+  margin-right: 8px;
+}
+.prompt {
+  color: var(--link);
+}
+.prompt.human {
+  color: var(--gap);
+}
+.tool {
+  color: var(--dim-text);
+}
+.end {
+  color: var(--text);
+  margin: 4px 0;
+}
+
+.answer {
+  max-height: 55%;
+  overflow-y: auto;
+  border-top: 1px solid var(--border-soft);
+}
+
+.answer > app-ask-form,
+.answer > app-round-form {
+  margin: 0;
+  padding: 10px 14px;
+}
+
+.answer > .muted {
+  margin: 8px 14px 0;
+}
+
+.end .md {
+  margin: 2px 0 0 14px;
+
+  ::ng-deep {
+    table {
+      display: block;
+      max-width: 100%;
+      margin: 6px 0;
+      overflow-x: auto;
+      border-collapse: collapse;
+      white-space: normal;
+    }
+
+    :is(td, th) {
+      padding: 3px 8px;
+      border: 1px solid var(--border-soft);
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      background: var(--chrome);
+      font-weight: 600;
+    }
+  }
+}
+
+.open.asking {
+  border-color: var(--asking);
+  color: var(--asking);
+  animation: ask 1.8s ease-in-out infinite;
+}
+
+@keyframes ask {
+  50% {
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--asking) 35%, transparent);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .open.asking {
+    animation: none;
+  }
+}
+
+.answer {
+  position: relative;
+}
+
+.size {
+  position: sticky;
+  top: 6px;
+  float: right;
+  margin: 6px 10px 0 0;
+  z-index: 1;
+  width: 28px;
+  height: 28px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--chrome);
+  color: var(--text);
+  cursor: pointer;
+}
+
+dialog.large {
+  width: min(1100px, 96vw);
+  height: 94vh;
+}
+
+dialog.large .answer {
+  flex: 1;
+  max-height: none;
+  border-top: 0;
+}
+
+.size {
+  display: grid;
+  place-items: center;
+  padding: 0;
+}
+
+.size svg {
+  width: 14px;
+  height: 14px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.answer {
+  display: flex;
+  flex-direction: column;
+}
+
+.answer > app-ask-form,
+.answer > app-round-form {
+  flex: 1 0 auto;
+}
+
+.answer > .size {
+  flex: none;
+  float: none;
+  align-self: flex-end;
+  margin-bottom: -34px;
+}

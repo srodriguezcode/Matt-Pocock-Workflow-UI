@@ -1,0 +1,85 @@
+:host {
+  position: relative;
+  display: inline-flex;
+}
+
+.refresh {
+  height: 34px;
+  padding: 0 10px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border-radius: 9px;
+  border: 1px solid var(--border);
+  background: var(--chrome);
+  color: var(--text);
+  font: inherit;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.refresh:hover {
+  border-color: var(--muted);
+}
+
+.refresh span {
+  color: var(--muted);
+}
+
+.refresh.busy {
+  cursor: progress;
+}
+
+.refresh.busy svg {
+  animation: spin 0.8s linear infinite;
+}
+
+.refresh.failed {
+  border-color: color-mix(in srgb, var(--blocked) 45%, transparent);
+}
+
+.refresh.failed span {
+  color: var(--blocked);
+}
+
+.tip {
+  display: none;
+  position: absolute;
+  top: 42px;
+  left: 0;
+  z-index: 1;
+  width: max-content;
+  max-width: 340px;
+  padding: 8px 10px;
+  border-radius: 9px;
+  border: 1px solid var(--chrome-border);
+  background: var(--chrome);
+  backdrop-filter: blur(8px);
+  color: var(--text);
+  font-size: 12px;
+  white-space: pre-wrap;
+}
+
+.tip p {
+  margin: 0;
+}
+
+.tip .retry {
+  margin-top: 4px;
+  color: var(--muted);
+}
+
+.refresh:hover + .tip,
+.refresh:focus-visible + .tip {
+  display: block;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.label {
+  display: none;
+}

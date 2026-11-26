@@ -1,0 +1,380 @@
+@let m = i18n.messages().board.panel;
+@let r = reading();
+
+@if (open()) {
+  <button type="button" class="close" [attr.aria-label]="m.close" (click)="close()">×</button>
+
+  @if ('issue' in r) {
+    <div class="head">
+      <h2>
+        <span class="n">{{ r.issue.handle }}</span
+        >{{ r.issue.title }}
+      </h2>
+      @if ((r.kind === 'ticket' || r.kind === 'system') && r.flag; as f) {
+        <button
+          type="button"
+          class="quiet toggle"
+          [class.on]="!f.next"
+          [attr.aria-pressed]="!f.next"
+          [attr.aria-label]="f.toggle"
+          [title]="f.toggle"
+          [disabled]="flagging()"
+          (click)="flag(r.issue.id, f.next)"
+        >
+          @if (flagging()) {
+            <span class="spinner" aria-hidden="true"></span>
+          } @else {
+            <svg viewBox="0 0 16 16" aria-hidden="true">
+              <path d="M8 0.5 L9.8 6.2 L15.5 8 L9.8 9.8 L8 15.5 L6.2 9.8 L0.5 8 L6.2 6.2 Z" />
+            </svg>
+          }
+        </button>
+      }
+    </div>
+    @if (flagError(); as error) {
+      <p class="error">{{ error }}</p>
+    }
+    @if (labels(); as chipLabels) {
+      <ng-container
+        [ngTemplateOutlet]="chips"
+        [ngTemplateOutletContext]="{ $implicit: chipLabels }"
+      />
+    }
+    <p class="state">{{ r.sentence }}</p>
+
+    @if (r.kind === 'ticket') {
+      @if (r.conflictNote; as note) {
+        <p class="note">{{ note }}</p>
+      }
+      @if (r.claim; as claim) {
+        <div class="claim">
+          <span>{{ claim.line }}</span>
+          @if (claim.stale) {
+            <span class="stale">{{ m.ticket.staleClaim }}</span>
+          }
+          @if (claim.mine) {
+            <button
+              type="button"
+              class="quiet"
+              [disabled]="releasing()"
+              (click)="release([r.issue.id])"
+            >
+              {{ m.ticket.release }}
+            </button>
+          } @else if (claim.releaseNote; as note) {
+            <span class="note">{{ note }}</span>
+          }
+        </div>
+      }
+      <app-session [id]="r.issue.id" [claimed]="r.claim !== null" />
+      <dl>
+        <dt>{{ m.details.kind }}</dt>
+        <dd>{{ r.kindName }}</dd>
+        <dt>{{ m.details.gate }}</dt>
+        <dd>{{ r.gate }}</dd>
+        <dt>{{ m.details.readiness }}</dt>
+        <dd>{{ r.readiness }}</dd>
+        @if (r.age; as age) {
+          <dt>{{ m.details.age }}</dt>
+          <dd>{{ age }}</dd>
+        }
+        <dt>{{ m.details.system }}</dt>
+        <dd>
+          @if (r.system; as sys) {
+            <button type="button" class="tl" (click)="fly(sys.id)">{{ sys.handle }}</button>
+            {{ sys.name }}
+          } @else {
+            {{ m.details.looseTicket }}
+          }
+        </dd>
+        <dt>{{ m.details.blockedBy }}</dt>
+        <dd>
+          <ng-container
+            [ngTemplateOutlet]="refList"
+            [ngTemplateOutletContext]="{ $implicit: r.blockedBy }"
+          />
+        </dd>
+        @if (r.inherited.length > 0) {
+          <dt>{{ m.details.inherited }}</dt>
+          <dd>
+            <ng-container
+              [ngTemplateOutlet]="refList"
+              [ngTemplateOutletContext]="{ $implicit: r.inherited }"
+            />
+          </dd>
+        }
+        <dt>{{ m.details.unblocks }}</dt>
+        <dd>
+          <ng-container
+            [ngTemplateOutlet]="refList"
+            [ngTemplateOutletContext]="{ $implicit: r.unblocks }"
+          />
+        </dd>
+        @if (r.claim; as claim) {
+          <dt>{{ m.details.claim }}</dt>
+          <dd>{{ claim.row }}</dd>
+        }
+      </dl>
+      @for (note of r.outsideNotes; track $index) {
+        <p class="note">{{ note }}</p>
+      }
+      @if (r.closedParentNote; as note) {
+        <p class="note">{{ note }}</p>
+      }
+      <app-cost [id]="r.issue.id" />
+    }
+
+    @if (r.kind === 'system') {
+      @if (r.mine; as mine) {
+        <div class="claim">
+          <span>{{ mine.claimed }}</span>
+          <button type="button" class="quiet" [disabled]="releasing()" (click)="release(mine.ids)">
+            {{ mine.release }}
+          </button>
+        </div>
+      }
+      <app-session [id]="r.issue.id" [claimed]="r.mine !== null" />
+      <dl>
+        <dt>{{ m.details.shape }}</dt>
+        <dd>{{ r.shape }}</dd>
+        <dt>{{ m.details.state }}</dt>
+        <dd>{{ r.state }}</dd>
+        <dt>{{ m.details.tickets }}</dt>
+        <dd>{{ r.tickets }}</dd>
+        @if (r.age; as age) {
+          <dt>{{ m.details.age }}</dt>
+          <dd>{{ age }}</dd>
+        }
+        <dt>{{ m.details.blockedBy }}</dt>
+        <dd>
+          <ng-container
+            [ngTemplateOutlet]="refList"
+            [ngTemplateOutletContext]="{ $implicit: r.blockedBy }"
+          />
+        </dd>
+        @if (r.issue.base; as base) {
+          <dt>{{ m.details.base }}</dt>
+          <dd>{{ base }}</dd>
+        }
+      </dl>
+      @if (r.flaggedTickets; as count) {
+        <p class="note">{{ count }}</p>
+      }
+      <app-cost [id]="r.issue.id" />
+    }
+
+    @if (r.kind === 'ember') {
+      <dl>
+        <dt>{{ m.details.gate }}</dt>
+        <dd>{{ r.gate }}</dd>
+        <dt>{{ m.details.blocks }}</dt>
+        <dd>
+          <ng-container
+            [ngTemplateOutlet]="refList"
+            [ngTemplateOutletContext]="{ $implicit: r.blocks }"
+          />
+        </dd>
+      </dl>
+    }
+
+    @if (r.kind === 'closed') {
+      <dl>
+        <dt>{{ m.details.gate }}</dt>
+        <dd>{{ r.gate }}</dd>
+        <dt>{{ m.details.system }}</dt>
+        <dd>
+          <button type="button" class="tl" (click)="fly(r.system.id)">{{ r.system.handle }}</button>
+          {{ r.system.name }}
+        </dd>
+      </dl>
+    }
+
+    @if (releaseError(); as error) {
+      <p class="error">{{ error }}</p>
+    }
+
+    <ng-container
+      [ngTemplateOutlet]="source"
+      [ngTemplateOutletContext]="{ url: r.issue.url, path: r.issue.path }"
+    />
+
+    @if (r.kind === 'system') {
+      <section class="md">
+        <h2>{{ m.frontierSection.heading }}</h2>
+        @for (group of r.frontier; track group.title) {
+          <h3>{{ group.title }}</h3>
+          <ul>
+            @for (t of group.tickets; track t.id) {
+              <li>
+                <button type="button" class="tl" (click)="fly(t.id)">{{ t.handle }}</button>
+                {{ t.title }}
+                @if (t.unlocks; as unlocks) {
+                  <span class="muted">{{ unlocks }}</span>
+                }
+              </li>
+            }
+          </ul>
+        } @empty {
+          <p class="muted">{{ m.frontierSection.empty }}</p>
+        }
+      </section>
+      @if (r.issue.kind === 'map') {
+        @if (destination(); as html) {
+          <section class="md" (click)="follow($event)">
+            <h2>{{ m.destination.heading }}</h2>
+            <div [innerHTML]="html"></div>
+          </section>
+        }
+        @if (outOfScope(); as html) {
+          <section class="md" (click)="follow($event)">
+            <h2>{{ m.outOfScope.heading }}</h2>
+            <div [innerHTML]="html"></div>
+          </section>
+        }
+      }
+    }
+
+    <ng-container [ngTemplateOutlet]="issueBody" />
+  }
+
+  @if (r.kind === 'line') {
+    <h2>
+      <span class="n">{{ r.title }}</span>
+    </h2>
+    <dl>
+      <dt>{{ m.dependency.blocker }}</dt>
+      <dd>
+        <button type="button" class="tl" (click)="fly(r.blocker.id)">{{ r.blocker.handle }}</button>
+        {{ r.blocker.title }}
+      </dd>
+      <dt>{{ m.dependency.blocked }}</dt>
+      <dd>
+        <button type="button" class="tl" (click)="fly(r.blocked.id)">{{ r.blocked.handle }}</button>
+        {{ r.blocked.title }}
+      </dd>
+      <dt>{{ m.dependency.state }}</dt>
+      <dd>{{ r.state }}</dd>
+    </dl>
+    <section class="md">
+      @for (line of r.lines; track $index) {
+        <p>{{ line }}</p>
+      }
+    </section>
+  }
+
+  @if (r.kind === 'fog') {
+    <h2>
+      <span class="n">{{ m.fog.heading }}</span
+      >{{ r.fog.head }}
+    </h2>
+    <p class="note">{{ m.fog.note }}</p>
+    <section class="md" (click)="follow($event)">
+      <div [innerHTML]="fogHtml()"></div>
+    </section>
+  }
+
+  @if (r.kind === 'off-sky') {
+    @if (body(); as b) {
+      <h2>
+        <span class="n">{{ b.detail.handle }}</span
+        >{{ b.detail.title }}
+        @if (b.detail.state === 'closed') {
+          <span class="muted">{{ m.offsky.closedSuffix }}</span>
+        }
+      </h2>
+      <ng-container
+        [ngTemplateOutlet]="chips"
+        [ngTemplateOutletContext]="{ $implicit: b.detail.labels }"
+      />
+      <p class="note">
+        {{ b.detail.state === 'closed' ? m.offsky.notOnSkyClosed : m.offsky.notOnSky }}
+      </p>
+      <ng-container
+        [ngTemplateOutlet]="source"
+        [ngTemplateOutletContext]="{ url: b.detail.url, path: b.detail.path }"
+      />
+    } @else {
+      <h2>
+        <span class="n">#{{ r.id }}</span>
+      </h2>
+    }
+    <ng-container [ngTemplateOutlet]="issueBody" />
+  }
+
+  @if (r.kind === 'gone') {
+    @if (body(); as b) {
+      <h2>
+        <span class="n">{{ b.detail.handle }}</span
+        >{{ b.detail.title }}
+        @if (goneClosed()) {
+          <span class="muted">{{ m.gone.closedSuffix }}</span>
+        }
+      </h2>
+    }
+    <p class="note">
+      {{ goneClosed() ? m.gone.goneClosed : m.gone.goneUnknown }}
+    </p>
+    @if (body(); as b) {
+      <ng-container
+        [ngTemplateOutlet]="source"
+        [ngTemplateOutletContext]="{ url: b.detail.url, path: b.detail.path }"
+      />
+      <ng-container [ngTemplateOutlet]="issueBody" />
+    }
+  }
+}
+
+<ng-template #chips let-labels>
+  <div class="chips">
+    @for (label of labels; track label.name) {
+      @if (chip(label); as colours) {
+        <span class="chip" [style.background]="colours.background" [style.color]="colours.color">
+          {{ label.name }}
+        </span>
+      } @else {
+        <span class="chip plain">{{ label.name }}</span>
+      }
+    } @empty {
+      <span class="note">{{ m.noLabels }}</span>
+    }
+  </div>
+</ng-template>
+
+<ng-template #refList let-refs>
+  @for (ref of refs; track ref.id) {
+    <button type="button" class="tl" [title]="ref.title" (click)="fly(ref.id)">
+      {{ ref.handle }}
+    </button>
+  } @empty {
+    {{ m.details.none }}
+  }
+</ng-template>
+
+<ng-template #source let-url="url" let-path="path">
+  @if (url) {
+    <a class="source" [href]="url" target="_blank" rel="noopener noreferrer">{{ m.source }}</a>
+  } @else if (path) {
+    <code class="source">{{ path }}</code>
+  }
+</ng-template>
+
+<ng-template #issueBody>
+  <section class="md" (click)="follow($event)">
+    @if (body(); as b) {
+      <div [innerHTML]="b.html"></div>
+      @if (b.comments.length > 0) {
+        <h3 class="comments">{{ m.commentsHeading(b.comments.length) }}</h3>
+        @for (c of b.comments; track $index) {
+          <div class="comment">
+            <div class="who">{{ c.author }} · {{ c.date }}</div>
+            <div [innerHTML]="c.html"></div>
+          </div>
+        }
+      }
+    } @else if (detailError(); as error) {
+      <p class="error">{{ error }}</p>
+    } @else if (detail.isLoading()) {
+      <p class="note">{{ m.loading }}</p>
+    }
+  </section>
+</ng-template>

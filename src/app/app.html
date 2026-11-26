@@ -1,0 +1,26 @@
+<app-rail class="rail" #rail />
+<main class="stage">
+  @if (board.repos().length === 0) {
+    <app-empty-board class="empty" [gaps]="board.gaps()" (add)="rail.openAdd()" />
+  } @else if (board.fatalGap(); as fatal) {
+    <app-empty-board class="empty" [fatal]="fatal" />
+  } @else {
+    <app-sky class="sky" />
+  }
+  <div class="controls">
+    @if (board.active(); as repo) {
+      <span class="repo-name">{{ repo.name }}</span>
+    }
+    <app-filter />
+    <app-refresh />
+    <app-gaps />
+  </div>
+  <div class="corner">
+    <app-notifications />
+    <app-architecture />
+  </div>
+  <app-pill />
+  <app-sheet />
+  <app-keys />
+</main>
+<app-panel class="panel" />

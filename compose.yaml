@@ -1,0 +1,18 @@
+services:
+  uaw:
+    image: ghcr.io/srodriguezcode/matt-pocock-workflow-ui:latest
+    container_name: uaw
+    init: true
+    restart: unless-stopped
+    ports:
+      - '127.0.0.1:4200:4200'
+    env_file: .env
+    volumes:
+      - claude:/home/node/.claude-config
+      - config:/home/node/.config
+      - repos:/repos
+
+volumes:
+  claude:
+  config:
+  repos:

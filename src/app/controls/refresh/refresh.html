@@ -1,0 +1,33 @@
+@let m = i18n.messages().board.refresh;
+@if (active()) {
+  <button
+    type="button"
+    class="refresh"
+    [class.failed]="failure()"
+    [class.busy]="reading()"
+    [attr.aria-disabled]="reading()"
+    [attr.aria-describedby]="failure() ? 'refresh-error' : null"
+    [title]="m.title"
+    (click)="refresh()"
+  >
+    <svg
+      width="14"
+      height="14"
+      viewBox="0 0 16 16"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="1.6"
+      stroke-linecap="round"
+    >
+      <path d="M13.5 8a5.5 5.5 0 1 1-1.6-3.9M13.5 2.5v3h-3" />
+    </svg>
+    <b class="label">{{ i18n.messages().board.layout.menu.refresh }}</b>
+    <span>{{ label() }}</span>
+  </button>
+  @if (failure(); as f) {
+    <div id="refresh-error" role="tooltip" class="tip">
+      <p>{{ f.message }}</p>
+      <p class="retry">{{ retry() }}</p>
+    </div>
+  }
+}

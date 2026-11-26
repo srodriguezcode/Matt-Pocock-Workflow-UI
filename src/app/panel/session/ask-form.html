@@ -1,0 +1,45 @@
+@let m = i18n.messages().board.session.form;
+<form (submit)="$event.preventDefault(); answer.send()">
+  <h4>{{ m.askHeading }}</h4>
+  @for (question of questions(); track $index; let i = $index) {
+    <fieldset>
+      <legend>
+        <span class="header">{{ question.header }}</span>
+        {{ question.question }}
+      </legend>
+      @for (option of question.options; track option.label) {
+        <label class="option">
+          <input
+            [type]="question.multiSelect ? 'checkbox' : 'radio'"
+            [name]="'q' + i"
+            [checked]="checked(i, option.label)"
+            (change)="pick(i, question, option.label)"
+          />
+          <span>
+            <span class="label">{{ option.label }}</span>
+            @if (option.description) {
+              <span class="description">{{ option.description }}</span>
+            }
+          </span>
+        </label>
+      }
+      <label class="other">
+        <span class="label">{{ m.other }}</span>
+        <input
+          type="text"
+          [placeholder]="m.otherPlaceholder"
+          [value]="answer.value()[i]!.other"
+          (input)="type(i, question, $any($event.target).value)"
+        />
+      </label>
+    </fieldset>
+  }
+  @if (answer.error(); as reason) {
+    <p class="error">{{ m.sendFailed(reason) }}</p>
+  }
+  <div class="send">
+    <button type="submit" [disabled]="!answer.ready()">
+      {{ answer.sending() ? m.sending : m.send }}
+    </button>
+  </div>
+</form>

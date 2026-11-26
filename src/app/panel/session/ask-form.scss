@@ -1,0 +1,120 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  margin: 12px 0;
+  font-size: 13px;
+}
+
+form {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+}
+
+h4 {
+  margin: 0 0 8px;
+  font-size: 13px;
+}
+
+fieldset {
+  min-width: 0;
+  margin: 0 0 12px;
+  padding: 0;
+  border: 0;
+}
+
+legend {
+  padding: 0;
+  margin-bottom: 4px;
+  font-weight: 600;
+}
+
+.header {
+  display: inline-block;
+  margin-right: 6px;
+  padding: 0 7px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.option {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  min-height: 44px;
+  padding: 8px 4px;
+  cursor: pointer;
+
+  input {
+    flex: none;
+    width: 20px;
+    height: 20px;
+    margin: 0;
+  }
+}
+
+.label {
+  display: block;
+}
+
+.description {
+  display: block;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.other {
+  display: block;
+  margin-top: 4px;
+
+  input {
+    box-sizing: border-box;
+    width: 100%;
+    min-height: 44px;
+    margin-top: 4px;
+    padding: 8px 10px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: transparent;
+    color: var(--text);
+    font: inherit;
+  }
+}
+
+.error {
+  color: var(--progress-fail);
+}
+
+button {
+  width: 100%;
+  min-height: 44px;
+  border: 0;
+  border-radius: 6px;
+  background: var(--go);
+  color: var(--go-text);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+
+  &:disabled {
+    background: var(--disabled);
+    color: var(--disabled-text);
+    cursor: default;
+  }
+}
+
+.send {
+  display: flex;
+  gap: 8px;
+  flex: none;
+  margin-top: auto;
+  position: sticky;
+  bottom: 8px;
+  background: var(--bg);
+  box-shadow:
+    0 8px 0 var(--bg),
+    0 -6px 12px var(--bg);
+}

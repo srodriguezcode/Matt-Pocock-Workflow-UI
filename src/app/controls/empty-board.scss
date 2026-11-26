@@ -1,0 +1,41 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: min(420px, 90vw);
+  margin: 0 auto;
+  text-align: center;
+  color: var(--text);
+}
+
+h2 {
+  margin: 0 0 4px;
+  font-size: 16px;
+}
+
+p {
+  margin: 0 0 14px;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+app-gap-list {
+  width: 100%;
+  text-align: left;
+}
+
+.add {
+  margin-top: 14px;
+  height: 34px;
+  padding: 0 16px;
+  border-radius: 9px;
+  border: 1px solid var(--go);
+  background: var(--go);
+  color: var(--go-text);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.add:hover {
+  background: var(--go-hover);
+}

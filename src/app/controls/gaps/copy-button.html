@@ -1,0 +1,4 @@
+@let m = i18n.messages().board.gaps;
+<button type="button" class="copy" (click)="copy()">
+  {{ copied() ? m.copiedAction : m.copyAction }}
+</button>

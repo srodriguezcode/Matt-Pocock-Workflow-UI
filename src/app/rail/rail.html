@@ -1,0 +1,68 @@
+@let m = i18n.messages().board.rail;
+@for (repo of board.repos(); track repo.path) {
+  <div
+    class="slot"
+    [class.lifted]="tileDrag.lifted($index)"
+    [style.transform]="tileDrag.transform($index)"
+  >
+    <button
+      type="button"
+      class="tile"
+      [class.active]="repo.path === board.activePath()"
+      [attr.aria-label]="repo.owner + '/' + repo.name + ' — ' + repo.path"
+      (click)="select(repo.path, $event)"
+      (pointerdown)="startDrag($event, $index)"
+      (pointermove)="tileDrag.move($event.clientY)"
+      (pointerup)="endDrag($event)"
+      (pointercancel)="cancelDrag()"
+      (contextmenu)="openSettings(repo, $event)"
+    >
+      @if ('image' in repo.tile) {
+        <img [src]="repo.tile.image" alt="" draggable="false" />
+      } @else {
+        <span>{{ repo.tile.letters }}</span>
+      }
+      <span class="tip" aria-hidden="true"
+        >{{ repo.owner }}/{{ repo.name }}<br />{{ repo.path }}</span
+      >
+    </button>
+    <button
+      type="button"
+      class="settings"
+      [attr.aria-label]="m.settings.openAction(repo.owner + '/' + repo.name)"
+      [title]="m.settings.openAction(repo.owner + '/' + repo.name)"
+      (click)="openSettings(repo)"
+    >
+      ⋯
+    </button>
+  </div>
+}
+@if (orderError(); as message) {
+  <p class="order-error" role="alert">
+    <span>{{ m.order.failed }} {{ message }}</span>
+    <button
+      type="button"
+      [attr.aria-label]="m.order.dismissAction"
+      [title]="m.order.dismissAction"
+      (click)="orderError.set(null)"
+    >
+      ×
+    </button>
+  </p>
+}
+<button type="button" class="tile add" [attr.aria-label]="m.addRepo.heading" (click)="openAdd()">
+  +
+</button>
+<button
+  type="button"
+  class="theme"
+  [attr.aria-label]="m.theme.light"
+  [attr.aria-pressed]="themeSwitch.theme() === 'light'"
+  [title]="m.theme.light"
+  (click)="themeSwitch.toggle()"
+>
+  ◐
+</button>
+<app-add-repo />
+<app-repo-settings />
+<app-install-note-dialog />

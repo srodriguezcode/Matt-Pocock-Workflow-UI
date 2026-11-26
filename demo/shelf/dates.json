@@ -1,0 +1,33 @@
+{
+  "created": {
+    ".scratch/lend-books/map.md": 26,
+    ".scratch/lend-books/issues/01-open-library-limits.md": 26,
+    ".scratch/lend-books/issues/02-public-link.md": 26,
+    ".scratch/lend-books/issues/03-late-loan.md": 20,
+    ".scratch/lend-books/issues/04-loan-card.md": 20,
+    ".scratch/lend-books/issues/05-who-can-borrow.md": 8,
+    ".scratch/scan-barcode/spec.md": 18,
+    ".scratch/scan-barcode/issues/01-camera-permission.md": 18,
+    ".scratch/scan-barcode/issues/02-read-isbn.md": 15,
+    ".scratch/scan-barcode/issues/03-fill-details.md": 15,
+    ".scratch/scan-barcode/issues/04-type-isbn.md": 15,
+    ".scratch/reading-goals/spec.md": 40,
+    ".scratch/goodreads-import/spec.md": 60,
+    ".scratch/goodreads-import/issues/01-read-csv.md": 60,
+    ".scratch/goodreads-import/issues/02-shelves-to-tags.md": 58,
+    ".scratch/stats-page/spec.md": 22,
+    ".scratch/stats-page/issues/01-books-per-month.md": 12,
+    ".scratch/stats-page/issues/02-top-authors.md": 12,
+    ".scratch/offline-covers/spec.md": 6,
+    ".scratch/offline-covers/issues/01-keep-covers.md": 6,
+    ".scratch/offline-covers/issues/02-show-saved-covers.md": 6,
+    ".scratch/inbox/issues/01-same-book-twice.md": 2,
+    ".scratch/inbox/issues/02-app-icon.md": 10,
+    ".scratch/inbox/issues/03-sort-by-title.md": 35,
+    ".scratch/inbox/issues/04-e-reader.md": 4
+  },
+  "claimed": {
+    ".scratch/lend-books/issues/03-late-loan.md": 0,
+    ".scratch/scan-barcode/issues/02-read-isbn.md": 9
+  }
+}

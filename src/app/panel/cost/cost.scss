@@ -1,0 +1,53 @@
+:host {
+  display: block;
+  margin: 0 0 12px;
+  font-size: 12px;
+}
+
+dl {
+  display: grid;
+  grid-template-columns: 96px 1fr;
+  gap: 4px 10px;
+  margin: 0;
+}
+
+dt,
+.muted,
+.note {
+  color: var(--muted);
+}
+
+.note {
+  font-size: 11px;
+}
+
+.error {
+  color: var(--progress-fail);
+}
+
+dd {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 8px;
+  margin: 0;
+}
+
+app-tip span + span {
+  margin-left: 8px;
+}
+
+dd[title] {
+  cursor: help;
+}
+
+.partial {
+  padding: 0 7px;
+  border: 1px solid var(--stale-bg);
+  border-radius: 999px;
+  color: var(--stale);
+  font-size: 10.5px;
+}
+
+p {
+  margin: 4px 0 0;
+}

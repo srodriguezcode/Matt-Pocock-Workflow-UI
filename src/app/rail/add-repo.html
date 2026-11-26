@@ -1,0 +1,33 @@
+@let m = i18n.messages().board.rail.addRepo;
+<dialog #dialog (close)="reset()">
+  <form (submit)="submit($event)">
+    <h2>{{ m.heading }}</h2>
+    @if (loaded()) {
+      <label>
+        {{ container() ? m.githubLabel : m.pathLabel }}
+        <input
+          type="text"
+          [placeholder]="container() ? m.githubPlaceholder : m.pathPlaceholder"
+          [value]="path()"
+          (input)="onPath($event)"
+          required
+        />
+      </label>
+    }
+    <app-tile-editor
+      [letters]="letters()"
+      (lettersChange)="onLetters($event)"
+      [(useImage)]="useImage"
+      [(image)]="image"
+    />
+    @if (error(); as message) {
+      <p class="error">{{ message }}</p>
+    }
+    <div class="actions">
+      <button type="button" (click)="close()">{{ m.cancelAction }}</button>
+      <button type="submit" [disabled]="!loaded() || submitting() || (useImage() && !image())">
+        {{ m.addAction }}
+      </button>
+    </div>
+  </form>
+</dialog>

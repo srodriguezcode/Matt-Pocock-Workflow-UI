@@ -1,0 +1,10 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "types": ["node"],
+    "lib": ["ES2024"],
+    "erasableSyntaxOnly": true,
+    "experimentalDecorators": false
+  },
+  "include": ["server/**/*.ts", "scripts/**/*.ts", "contract/**/*.d.ts", "vitest.config.ts"]
+}

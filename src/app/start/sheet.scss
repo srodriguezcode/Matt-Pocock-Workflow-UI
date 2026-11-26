@@ -1,0 +1,232 @@
+:host {
+  display: contents;
+}
+
+.sheet {
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: 8;
+  width: min(420px, calc(100% - 20px));
+  background: var(--sheet-bg);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 12px 14px;
+  box-shadow: 0 14px 40px var(--sheet-shadow);
+}
+
+.head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 10px;
+  margin-bottom: 6px;
+}
+
+.note {
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.steps {
+  margin: 4px 0 8px;
+  padding-left: 18px;
+  font-size: 12px;
+  color: var(--secondary-text);
+}
+
+.base {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 4px;
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.base select {
+  background: var(--sheet-select-bg);
+  color: var(--sheet-select-text);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 4px 6px;
+  font:
+    11.5px ui-monospace,
+    Menlo,
+    monospace;
+  min-width: 0;
+  text-overflow: ellipsis;
+}
+
+.reused {
+  color: var(--gap);
+  font-size: 16px;
+  font-weight: 600;
+  cursor: help;
+}
+
+.override {
+  color: var(--gap);
+  white-space: nowrap;
+}
+
+.cmd {
+  position: relative;
+  margin: 8px 0 0;
+}
+
+.cmd pre {
+  margin: 0;
+  background: var(--sheet-cmd-bg);
+  border: 1px solid var(--border-soft);
+  border-radius: 6px;
+  padding: 8px 56px 8px 10px;
+  font:
+    11.5px/1.55 ui-monospace,
+    Menlo,
+    monospace;
+  color: var(--sheet-cmd-text);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.copy {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  background: var(--sheet-copy-bg);
+  border: 1px solid var(--border);
+  color: var(--dim-text);
+  border-radius: 5px;
+  font-size: 11px;
+  padding: 2px 7px;
+  cursor: pointer;
+}
+
+.copy:hover {
+  color: var(--hover-text);
+}
+
+.row {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.btn {
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: 7px;
+  padding: 6px 14px;
+  cursor: pointer;
+  border: 1px solid transparent;
+  white-space: nowrap;
+}
+
+.btn.go {
+  background: var(--go);
+  color: var(--go-text);
+}
+
+.btn.go:hover:not(:disabled) {
+  background: var(--go-hover);
+}
+
+.btn:disabled {
+  background: var(--disabled);
+  color: var(--disabled-text);
+  border-color: var(--sheet-disabled-border);
+  cursor: not-allowed;
+}
+
+.btn.quiet {
+  background: none;
+  border-color: var(--sheet-quiet-border);
+  color: var(--secondary-text);
+  font-weight: 500;
+  padding: 3px 10px;
+}
+
+.btn.quiet:hover {
+  border-color: var(--sheet-quiet-hover-border);
+  color: var(--hover-text);
+}
+
+.why {
+  margin: 4px 0;
+  font-size: 12px;
+  color: var(--reason);
+}
+
+.no {
+  color: var(--blocked);
+}
+
+.progress {
+  margin: 4px 0;
+  font-size: 12px;
+}
+
+.line {
+  display: flex;
+  gap: 8px;
+  align-items: baseline;
+  padding: 2px 0;
+  color: var(--sheet-pending-text);
+}
+
+.line.running {
+  color: var(--progress-run);
+}
+
+.line.done {
+  color: var(--progress-ok);
+}
+
+.line.failed {
+  color: var(--progress-fail);
+}
+
+.line.undone {
+  color: var(--stale);
+}
+
+.icon {
+  width: 12px;
+  text-align: center;
+}
+
+.line code {
+  font:
+    11px ui-monospace,
+    Menlo,
+    monospace;
+  color: var(--dim-text);
+}
+
+.err {
+  margin: 6px 0;
+  background: var(--sheet-error-bg);
+  border: 1px solid var(--sheet-error-border);
+  color: var(--danger-text);
+  border-radius: 6px;
+  padding: 6px 8px;
+  font:
+    11px ui-monospace,
+    Menlo,
+    monospace;
+  white-space: pre-wrap;
+}
+
+.rolled {
+  margin-top: 6px;
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.ok {
+  margin: 4px 0 0;
+  color: var(--progress-ok);
+}

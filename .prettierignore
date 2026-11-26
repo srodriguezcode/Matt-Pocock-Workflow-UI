@@ -1,0 +1,7 @@
+skills/
+dist/
+.angular/
+node_modules/
+package-lock.json
+*.md
+server/**/fixtures/

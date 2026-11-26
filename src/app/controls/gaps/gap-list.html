@@ -1,0 +1,25 @@
+@let codes = i18n.messages().board.codes;
+@let m = i18n.messages().board.gaps;
+@for (gap of gaps(); track gap.id) {
+  <article class="gap">
+    <p class="tier">{{ tierWord(codes.gapTiers, gap.tier) }}</p>
+    <h3>{{ word(codes.gapTitles, gap.problem) }}</h3>
+    <p class="effect">{{ word(codes.gapEffects, gap.problem) }}</p>
+    @if (fixCommand(gap.fix); as command) {
+      <div class="fix">
+        <pre>{{ command }}</pre>
+        <app-copy-button [text]="command" />
+      </div>
+    } @else if (fixSkill(gap.fix); as skill) {
+      <p class="fix">{{ m.fixSkill(skill) }}</p>
+    }
+    @if (gap.searched.length) {
+      <div class="searched">
+        <p>{{ m.searchedLabel }}</p>
+        @for (path of gap.searched; track path) {
+          <code>{{ path }}</code>
+        }
+      </div>
+    }
+  </article>
+}

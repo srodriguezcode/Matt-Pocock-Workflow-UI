@@ -1,0 +1,688 @@
+{
+ "data": {
+  "repository": {
+   "issue": {
+    "subIssues": {
+     "nodes": [
+      {
+       "number": 17,
+       "title": "Project skeleton and wire contract",
+       "state": "CLOSED",
+       "stateReason": "COMPLETED",
+       "url": "https://github.com/srodriguezcode/UI-Agent-Workflow/issues/17",
+       "repository": {
+        "nameWithOwner": "srodriguezcode/UI-Agent-Workflow"
+       },
+       "labels": {
+        "nodes": [
+         {
+          "name": "ready-for-agent",
+          "color": "0e8a16"
+         }
+        ]
+       },
+       "subIssuesSummary": {
+        "total": 0,
+        "completed": 0
+       },
+       "blockedBy": {
+        "nodes": []
+       }
+      },
+      {
+       "number": 18,
+       "title": "Read a GitHub repo into the Sky",
+       "state": "CLOSED",
+       "stateReason": "COMPLETED",
+       "url": "https://github.com/srodriguezcode/UI-Agent-Workflow/issues/18",
+       "repository": {
+        "nameWithOwner": "srodriguezcode/UI-Agent-Workflow"
+       },
+       "labels": {
+        "nodes": [
+         {
+          "name": "ready-for-agent",
+          "color": "0e8a16"
+         }
+        ]
+       },
+       "subIssuesSummary": {
+        "total": 0,
+        "completed": 0
+       },
+       "blockedBy": {
+        "nodes": [
+         {
+          "number": 17,
+          "state": "CLOSED",
+          "repository": {
+           "nameWithOwner": "srodriguezcode/UI-Agent-Workflow"
+          }
+         }
+        ]
+       }
+      },
+      {
+       "number": 19,
+       "title": "Canvas sky: stars, select, dim",
+       "state": "CLOSED",
+       "stateReason": "COMPLETED",
+       "url": "https://github.com/srodriguezcode/UI-Agent-Workflow/issues/19",
+       "repository": {
+        "nameWithOwner": "srodriguezcode/UI-Agent-Workflow"
+       },
+       "labels": {
+        "nodes": [
+         {
+          "name": "ready-for-agent",
+          "color": "0e8a16"
+         }
+        ]
+       },
+       "subIssuesSummary": {
+        "total": 0,
+        "completed": 0
+       },
+       "blockedBy": {
+        "nodes": [
+         {
+          "number": 17,
+          "state": "CLOSED",
+          "repository": {
+           "nameWithOwner": "srodriguezcode/UI-Agent-Workflow"
+          }
+         }
+        ]
+       }
+      },
+      {
+       "number": 20,
+       "title": "Galaxy layout and drawing",
+       "state": "CLOSED",
+       "stateReason": "COMPLETED",
+       "url": "https://github.com/srodriguezcode/UI-Agent-Workflow/issues/20",
+       "repository": {
+        "nameWithOwner": "srodriguezcode/UI-Agent-Workflow"
+       },
+       "labels": {
+        "nodes": [
+         {
+          "name": "ready-for-agent",
+          "color": "0e8a16"
+         }
+        ]
+       },
+       "subIssuesSummary": {
+        "total": 0,
+        "completed": 0
+       },
+       "blockedBy": {
+        "nodes": [
+         {
+          "number": 19,
+          "state": "CLOSED",
+          "repository": {
+           "nameWithOwner": "srodriguezcode/UI-Agent-Workflow"
+          }
+         },
+         {
+          "number": 18,
+          "state": "CLOSED",
+          "repository": {
+           "nameWithOwner": "srodriguezcode/UI-Agent-Workflow"
+          }
+         }
+        ]
+       }
+      },
+      {
+       "number": 21,
+       "title": "Zoom, labels, system filter",
+       "state": "CLOSED",
+       "stateReason": "COMPLETED",
+       "url": "https://github.com/srodriguezcode/UI-Agent-Workflow/issues/21",
+       "repository": {
+        "nameWithOwner": "srodriguezcode/UI-Agent-Workflow"
+       },
+       "labels": {
+        "nodes": [
+         {
+          "name": "ready-for-agent",
+          "color": "0e8a16"
+         }
+        ]
+       },
+       "subIssuesSummary": {
+        "total": 0,
+        "completed": 0
+       },
+       "blockedBy": {
+        "nodes": [
+         {
+          "number": 19,
+          "state": "CLOSED",
+          "repository": {
+           "nameWithOwner": "srodriguezcode/UI-Agent-Workflow"
+          }
+         },
+         {
+          "number": 18,
+          "state": "CLOSED",
+          "repository": {
+           "nameWithOwner": "srodriguezcode/UI-Agent-Workflow"
+          }
+         }
+        ]
+       }
+      },
+      {
+       "number": 22,
+       "title": "Panel",
+       "state": "CLOSED",
+       "stateReason": "COMPLETED",
+       "url": "https://github.com/srodriguezcode/UI-Agent-Workflow/issues/22",
+       "repository": {
+        "nameWithOwner": "srodriguezcode/UI-Agent-Workflow"
+       },
+       "labels": {
+        "nodes": [
+         {
+          "name": "ready-for-agent",
+          "color": "0e8a16"
+         }
+        ]
+       },
+       "subIssuesSummary": {
+        "total": 0,
+        "completed": 0
+       },
+       "blockedBy": {
+        "nodes": [
+         {
+          "number": 19,
+          "state": "CLOSED",
+          "repository": {
+           "nameWithOwner": "srodriguezcode/UI-Agent-Workflow"
+          }
+         },
+         {
+          "number": 18,
+          "state": "CLOSED",
+          "repository": {
+           "nameWithOwner": "srodriguezcode/UI-Agent-Workflow"
+          }
+         }
+        ]
+       }
+      },
+      {
+       "number": 23,
+       "title": "Start on a Frontier ticket",
+       "state": "CLOSED",
+       "stateReason": "COMPLETED",
+       "url": "https://github.com/srodriguezcode/UI-Agent-Workflow/issues/23",
+       "repository": {
+        "nameWithOwner": "srodriguezcode/UI-Agent-Workflow"
+       },
+       "labels": {
+        "nodes": [
+         {
+          "name": "ready-for-agent",
+          "color": "0e8a16"
+         }
+        ]
+       },
+       "subIssuesSummary": {
+        "total": 0,
+        "completed": 0
+       },
+       "blockedBy": {
+        "nodes": [
+         {
+          "number": 19,
+          "state": "CLOSED",
+          "repository": {
+           "nameWithOwner": "srodriguezcode/UI-Agent-Workflow"
+          }
+         },
+         {
+          "number": 18,
+          "state": "CLOSED",
+          "repository": {
+           "nameWithOwner": "srodriguezcode/UI-Agent-Workflow"
+          }
+         }
+        ]
+       }
+      },
+      {
+       "number": 24,
+       "title": "Start on a Frontier system, a Decision frontier ticket and the Map",
+       "state": "CLOSED",
+       "stateReason": "COMPLETED",
+       "url": "https://github.com/srodriguezcode/UI-Agent-Workflow/issues/24",
+       "repository": {
+        "nameWithOwner": "srodriguezcode/UI-Agent-Workflow"
+       },
+       "labels": {
+        "nodes": [
+         {
+          "name": "ready-for-agent",
+          "color": "0e8a16"
+         }
+        ]
+       },
+       "subIssuesSummary": {
+        "total": 0,
+        "completed": 0
+       },
+       "blockedBy": {
+        "nodes": [
+         {
+          "number": 23,
+          "state": "CLOSED",
+          "repository": {
+           "nameWithOwner": "srodriguezcode/UI-Agent-Workflow"
+          }
+         }
+        ]
+       }
+      },
+      {
+       "number": 25,
+       "title": "Claim line, Stale claim, Release",
+       "state": "CLOSED",
+       "stateReason": "COMPLETED",
+       "url": "https://github.com/srodriguezcode/UI-Agent-Workflow/issues/25",
+       "repository": {
+        "nameWithOwner": "srodriguezcode/UI-Agent-Workflow"
+       },
+       "labels": {
+        "nodes": [
+         {
+          "name": "ready-for-agent",
+          "color": "0e8a16"
+         }
+        ]
+       },
+       "subIssuesSummary": {
+        "total": 0,
+        "completed": 0
+       },
+       "blockedBy": {
+        "nodes": [
+         {
+          "number": 22,
+          "state": "CLOSED",
+          "repository": {
+           "nameWithOwner": "srodriguezcode/UI-Agent-Workflow"
+          }
+         }
+        ]
+       }
+      },
+      {
+       "number": 26,
+       "title": "Refresh",
+       "state": "CLOSED",
+       "stateReason": "COMPLETED",
+       "url": "https://github.com/srodriguezcode/UI-Agent-Workflow/issues/26",
+       "repository": {
+        "nameWithOwner": "srodriguezcode/UI-Agent-Workflow"
+       },
+       "labels": {
+        "nodes": [
+         {
+          "name": "ready-for-agent",
+          "color": "0e8a16"
+         }
+        ]
+       },
+       "subIssuesSummary": {
+        "total": 0,
+        "completed": 0
+       },
+       "blockedBy": {
+        "nodes": [
+         {
+          "number": 20,
+          "state": "CLOSED",
+          "repository": {
+           "nameWithOwner": "srodriguezcode/UI-Agent-Workflow"
+          }
+         }
+        ]
+       }
+      },
+      {
+       "number": 27,
+       "title": "Gaps",
+       "state": "CLOSED",
+       "stateReason": "COMPLETED",
+       "url": "https://github.com/srodriguezcode/UI-Agent-Workflow/issues/27",
+       "repository": {
+        "nameWithOwner": "srodriguezcode/UI-Agent-Workflow"
+       },
+       "labels": {
+        "nodes": [
+         {
+          "name": "ready-for-agent",
+          "color": "0e8a16"
+         }
+        ]
+       },
+       "subIssuesSummary": {
+        "total": 0,
+        "completed": 0
+       },
+       "blockedBy": {
+        "nodes": [
+         {
+          "number": 23,
+          "state": "CLOSED",
+          "repository": {
+           "nameWithOwner": "srodriguezcode/UI-Agent-Workflow"
+          }
+         },
+         {
+          "number": 18,
+          "state": "CLOSED",
+          "repository": {
+           "nameWithOwner": "srodriguezcode/UI-Agent-Workflow"
+          }
+         }
+        ]
+       }
+      },
+      {
+       "number": 28,
+       "title": "Run, repo rail and Add repo",
+       "state": "CLOSED",
+       "stateReason": "COMPLETED",
+       "url": "https://github.com/srodriguezcode/UI-Agent-Workflow/issues/28",
+       "repository": {
+        "nameWithOwner": "srodriguezcode/UI-Agent-Workflow"
+       },
+       "labels": {
+        "nodes": [
+         {
+          "name": "ready-for-agent",
+          "color": "0e8a16"
+         }
+        ]
+       },
+       "subIssuesSummary": {
+        "total": 0,
+        "completed": 0
+       },
+       "blockedBy": {
+        "nodes": [
+         {
+          "number": 17,
+          "state": "CLOSED",
+          "repository": {
+           "nameWithOwner": "srodriguezcode/UI-Agent-Workflow"
+          }
+         }
+        ]
+       }
+      },
+      {
+       "number": 29,
+       "title": "Read .scratch/ repos",
+       "state": "CLOSED",
+       "stateReason": "COMPLETED",
+       "url": "https://github.com/srodriguezcode/UI-Agent-Workflow/issues/29",
+       "repository": {
+        "nameWithOwner": "srodriguezcode/UI-Agent-Workflow"
+       },
+       "labels": {
+        "nodes": [
+         {
+          "name": "ready-for-agent",
+          "color": "0e8a16"
+         }
+        ]
+       },
+       "subIssuesSummary": {
+        "total": 0,
+        "completed": 0
+       },
+       "blockedBy": {
+        "nodes": [
+         {
+          "number": 18,
+          "state": "CLOSED",
+          "repository": {
+           "nameWithOwner": "srodriguezcode/UI-Agent-Workflow"
+          }
+         }
+        ]
+       }
+      },
+      {
+       "number": 30,
+       "title": ".scratch/ Claim, Release and Start",
+       "state": "CLOSED",
+       "stateReason": "COMPLETED",
+       "url": "https://github.com/srodriguezcode/UI-Agent-Workflow/issues/30",
+       "repository": {
+        "nameWithOwner": "srodriguezcode/UI-Agent-Workflow"
+       },
+       "labels": {
+        "nodes": [
+         {
+          "name": "ready-for-agent",
+          "color": "0e8a16"
+         }
+        ]
+       },
+       "subIssuesSummary": {
+        "total": 0,
+        "completed": 0
+       },
+       "blockedBy": {
+        "nodes": [
+         {
+          "number": 25,
+          "state": "CLOSED",
+          "repository": {
+           "nameWithOwner": "srodriguezcode/UI-Agent-Workflow"
+          }
+         },
+         {
+          "number": 23,
+          "state": "CLOSED",
+          "repository": {
+           "nameWithOwner": "srodriguezcode/UI-Agent-Workflow"
+          }
+         },
+         {
+          "number": 29,
+          "state": "CLOSED",
+          "repository": {
+           "nameWithOwner": "srodriguezcode/UI-Agent-Workflow"
+          }
+         }
+        ]
+       }
+      },
+      {
+       "number": 31,
+       "title": "Keyboard",
+       "state": "CLOSED",
+       "stateReason": "COMPLETED",
+       "url": "https://github.com/srodriguezcode/UI-Agent-Workflow/issues/31",
+       "repository": {
+        "nameWithOwner": "srodriguezcode/UI-Agent-Workflow"
+       },
+       "labels": {
+        "nodes": [
+         {
+          "name": "ready-for-agent",
+          "color": "0e8a16"
+         }
+        ]
+       },
+       "subIssuesSummary": {
+        "total": 0,
+        "completed": 0
+       },
+       "blockedBy": {
+        "nodes": [
+         {
+          "number": 32,
+          "state": "CLOSED",
+          "repository": {
+           "nameWithOwner": "srodriguezcode/UI-Agent-Workflow"
+          }
+         },
+         {
+          "number": 23,
+          "state": "CLOSED",
+          "repository": {
+           "nameWithOwner": "srodriguezcode/UI-Agent-Workflow"
+          }
+         },
+         {
+          "number": 21,
+          "state": "CLOSED",
+          "repository": {
+           "nameWithOwner": "srodriguezcode/UI-Agent-Workflow"
+          }
+         }
+        ]
+       }
+      },
+      {
+       "number": 32,
+       "title": "i18n: every user-facing string from the message bundle",
+       "state": "CLOSED",
+       "stateReason": "COMPLETED",
+       "url": "https://github.com/srodriguezcode/UI-Agent-Workflow/issues/32",
+       "repository": {
+        "nameWithOwner": "srodriguezcode/UI-Agent-Workflow"
+       },
+       "labels": {
+        "nodes": [
+         {
+          "name": "ready-for-agent",
+          "color": "0e8a16"
+         }
+        ]
+       },
+       "subIssuesSummary": {
+        "total": 0,
+        "completed": 0
+       },
+       "blockedBy": {
+        "nodes": [
+         {
+          "number": 33,
+          "state": "CLOSED",
+          "repository": {
+           "nameWithOwner": "srodriguezcode/UI-Agent-Workflow"
+          }
+         },
+         {
+          "number": 30,
+          "state": "CLOSED",
+          "repository": {
+           "nameWithOwner": "srodriguezcode/UI-Agent-Workflow"
+          }
+         },
+         {
+          "number": 29,
+          "state": "CLOSED",
+          "repository": {
+           "nameWithOwner": "srodriguezcode/UI-Agent-Workflow"
+          }
+         },
+         {
+          "number": 26,
+          "state": "CLOSED",
+          "repository": {
+           "nameWithOwner": "srodriguezcode/UI-Agent-Workflow"
+          }
+         },
+         {
+          "number": 21,
+          "state": "CLOSED",
+          "repository": {
+           "nameWithOwner": "srodriguezcode/UI-Agent-Workflow"
+          }
+         }
+        ]
+       }
+      },
+      {
+       "number": 33,
+       "title": "Aliases instead of ../ imports",
+       "state": "CLOSED",
+       "stateReason": "COMPLETED",
+       "url": "https://github.com/srodriguezcode/UI-Agent-Workflow/issues/33",
+       "repository": {
+        "nameWithOwner": "srodriguezcode/UI-Agent-Workflow"
+       },
+       "labels": {
+        "nodes": [
+         {
+          "name": "ready-for-agent",
+          "color": "0e8a16"
+         }
+        ]
+       },
+       "subIssuesSummary": {
+        "total": 0,
+        "completed": 0
+       },
+       "blockedBy": {
+        "nodes": [
+         {
+          "number": 26,
+          "state": "CLOSED",
+          "repository": {
+           "nameWithOwner": "srodriguezcode/UI-Agent-Workflow"
+          }
+         },
+         {
+          "number": 21,
+          "state": "CLOSED",
+          "repository": {
+           "nameWithOwner": "srodriguezcode/UI-Agent-Workflow"
+          }
+         }
+        ]
+       }
+      },
+      {
+       "number": 35,
+       "title": "Selected System shows its closed route as Embers",
+       "state": "OPEN",
+       "stateReason": null,
+       "url": "https://github.com/srodriguezcode/UI-Agent-Workflow/issues/35",
+       "repository": {
+        "nameWithOwner": "srodriguezcode/UI-Agent-Workflow"
+       },
+       "labels": {
+        "nodes": [
+         {
+          "name": "ready-for-agent",
+          "color": "0e8a16"
+         }
+        ]
+       },
+       "subIssuesSummary": {
+        "total": 0,
+        "completed": 0
+       },
+       "blockedBy": {
+        "nodes": []
+       }
+      }
+     ]
+    }
+   }
+  }
+ }
+}

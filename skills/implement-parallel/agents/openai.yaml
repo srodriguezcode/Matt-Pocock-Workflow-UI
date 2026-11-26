@@ -1,0 +1,5 @@
+interface:
+  display_name: "Implement in Parallel"
+  short_description: "Build work from a spec or tickets, fanned across subagents and worktrees"
+policy:
+  allow_implicit_invocation: false

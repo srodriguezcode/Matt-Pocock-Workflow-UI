@@ -1,0 +1,15 @@
+.git
+.github
+.angular
+.claude
+.agents
+.scratch
+dist
+node_modules
+coverage
+out-tsc
+docs
+*.md
+!README.md
+.env
+.env.*

@@ -1,0 +1,28 @@
+@let t = text();
+@if (view(); as v) {
+  <dl>
+    <dt>{{ t.cost }}</dt>
+    @if (v.none) {
+      <dd class="muted">{{ t.none }}</dd>
+    } @else {
+      <dd>
+        <app-tip [text]="v.breakdown">
+          <span>{{ v.tokens }}</span>
+          <span>{{ v.dollars }}</span>
+        </app-tip>
+        @if (v.shortfalls.length > 0) {
+          <span class="partial">{{ t.partial }}</span>
+        }
+      </dd>
+      <dt>{{ t.workingTime }}</dt>
+      <dd>{{ v.working }}</dd>
+    }
+  </dl>
+  @for (shortfall of v.shortfalls; track $index) {
+    <p class="note">{{ shortfall }}</p>
+  }
+} @else if (failure(); as failure) {
+  <p class="error">{{ failure }}</p>
+} @else if (reading.isLoading()) {
+  <p class="muted">{{ t.loading }}</p>
+}

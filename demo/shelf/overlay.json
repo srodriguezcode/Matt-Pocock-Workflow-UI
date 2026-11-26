@@ -1,0 +1,5 @@
+{
+  "loose": ["inbox"],
+  "blockedBy": { "stats-page": ["goodreads-import"] },
+  "base": {}
+}

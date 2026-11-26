@@ -1,0 +1,37 @@
+:host {
+  display: flex;
+  align-items: stretch;
+  flex: none;
+}
+
+button {
+  width: 44px;
+  display: grid;
+  place-items: center;
+  font: inherit;
+  cursor: pointer;
+  color: var(--muted);
+  background: var(--chrome);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+}
+
+button.on {
+  color: var(--go-text);
+  background: var(--gap);
+  border-color: var(--gap);
+}
+
+svg {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+}
+
+svg .fill {
+  fill: currentColor;
+  stroke: none;
+}

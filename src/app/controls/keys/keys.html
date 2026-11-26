@@ -1,0 +1,16 @@
+@let m = i18n.messages().board.keys;
+@if (open()) {
+  <div class="popover" role="dialog" [attr.aria-label]="m.title">
+    <b class="title">{{ m.title }}</b>
+    <dl>
+      @for (row of m.rows; track $index) {
+        <dt>
+          @for (key of row.keys; track $index) {
+            <kbd>{{ key }}</kbd>
+          }
+        </dt>
+        <dd>{{ row.does }}</dd>
+      }
+    </dl>
+  </div>
+}

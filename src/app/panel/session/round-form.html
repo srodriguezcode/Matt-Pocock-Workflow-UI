@@ -1,0 +1,61 @@
+@let m = i18n.messages().board.session.form;
+<form (submit)="$event.preventDefault(); answer.send()">
+  <h4>{{ m.roundHeading(questions().length) }}</h4>
+  @for (question of questions(); track question.number; let i = $index) {
+    <fieldset class="q">
+      <legend class="title">
+        <span class="n">{{ question.number }}.</span>{{ question.title }}
+      </legend>
+      @if (question.body) {
+        <p class="body">{{ question.body }}</p>
+      }
+      @for (option of question.options; track option.key) {
+        <label class="option">
+          <input
+            type="radio"
+            [name]="'q' + i"
+            [value]="option.key"
+            [checked]="answer.value()[i]!.key === option.key"
+            (change)="pick(i, option.key)"
+          />
+          <span>
+            <span class="label"
+              ><span class="key">{{ option.key }})</span> {{ option.label }}</span
+            >
+            @if (option.details.length) {
+              <dl class="details">
+                @for (detail of option.details; track $index) {
+                  @if (detail.column) {
+                    <dt>{{ detail.column }}</dt>
+                  }
+                  <dd>{{ detail.text }}</dd>
+                }
+              </dl>
+            }
+          </span>
+        </label>
+      }
+      <p class="rec">{{ m.recommended(question.recommendation) }}</p>
+      <label class="other">
+        <span class="label">{{ m.other }}</span>
+        <input
+          type="text"
+          [placeholder]="m.otherPlaceholder"
+          [value]="answer.value()[i]!.text"
+          (input)="type(i, $any($event.target).value)"
+        />
+      </label>
+    </fieldset>
+  }
+  @if (answer.error(); as reason) {
+    <p class="error">{{ m.sendFailed(reason) }}</p>
+  }
+  <div class="send">
+    @if (answer.delivery.choosable()) {
+      <app-delivery-toggle [(delivery)]="answer.delivery.picked" />
+    }
+    <button type="submit" [disabled]="!answer.ready()">
+      {{ answer.sending() ? m.sending : m.send }}
+    </button>
+  </div>
+</form>

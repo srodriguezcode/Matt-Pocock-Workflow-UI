@@ -1,0 +1,27 @@
+@if (option(); as o) {
+  <button
+    type="button"
+    class="architecture"
+    [attr.aria-disabled]="!o.enabled"
+    [attr.aria-expanded]="open()"
+    [attr.aria-label]="label()"
+    [title]="tooltip()"
+    (click)="toggle()"
+  >
+    <svg
+      width="15"
+      height="15"
+      viewBox="0 0 16 16"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="1.6"
+      stroke-linejoin="round"
+    >
+      <path d="M8 1.8 14.5 5 8 8.2 1.5 5z" />
+      <path d="M1.5 8 8 11.2 14.5 8" />
+      <path d="M1.5 11 8 14.2 14.5 11" />
+    </svg>
+    <span class="label">{{ i18n.messages().board.layout.menu.architecture }}</span>
+  </button>
+  <p class="note">{{ tooltip() }}</p>
+}

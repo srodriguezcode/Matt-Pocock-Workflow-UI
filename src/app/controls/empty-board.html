@@ -1,0 +1,10 @@
+@let m = i18n.messages().board.empty;
+@if (fatal(); as gap) {
+  <h2>{{ m.noSkyHeading }}</h2>
+  <app-gap-list [gaps]="[gap]" />
+} @else {
+  <h2>{{ m.noRepoHeading }}</h2>
+  <p>{{ m.intro }}</p>
+  <app-gap-list [gaps]="gaps()" />
+  <button type="button" class="add" (click)="add.emit()">{{ m.addAction }}</button>
+}

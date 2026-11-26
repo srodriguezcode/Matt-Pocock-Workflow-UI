@@ -1,0 +1,96 @@
+@let m = i18n.messages().board.session;
+<button type="button" class="open" [class.asking]="asking()" (click)="show()">
+  {{ m.peek.heading }}
+</button>
+<dialog #dialog [class.large]="large()" (close)="open.set(false)" (click)="closeOnBackdrop($event)">
+  @if (open()) {
+    <header>
+      <strong>{{ m.peek.heading }}</strong>
+      <span class="state">{{ m.states[session().state] }}</span>
+      <button type="button" class="close" [attr.aria-label]="m.peek.close" (click)="close()">
+        ×
+      </button>
+    </header>
+    <div class="history" #history [hidden]="large()">
+      @if (frozen()) {
+        <p class="muted">{{ m.peek.frozen }}</p>
+      }
+      @for (turn of turns(); track $index) {
+        <div class="rule">{{ m.peek.turn($index + 1) }}</div>
+        @if (turn.prompt; as prompt) {
+          <div class="row prompt" [class.human]="prompt.human">
+            <span class="at">{{ time(prompt.at) }}</span
+            >❯ {{ prompt.full ?? prompt.text }}
+          </div>
+        }
+        @for (tool of turn.tools; track $index) {
+          <div class="row tool">
+            <span class="at">{{ time(tool.at) }}</span
+            >⏺ {{ tool.text }}
+          </div>
+        }
+        @if (turn.end; as end) {
+          <div class="row end">
+            <span class="at">{{ time(end.at) }}</span
+            >⏎
+            <div class="md" [innerHTML]="turn.html"></div>
+          </div>
+        }
+      } @empty {
+        <p class="muted">{{ m.peek.empty }}</p>
+      }
+    </div>
+    <div class="answer">
+      @if (asking()) {
+        <button
+          type="button"
+          class="size"
+          [attr.aria-label]="large() ? m.peek.shrink : m.peek.enlarge"
+          [title]="large() ? m.peek.shrink : m.peek.enlarge"
+          (click)="large.set(!large())"
+        >
+          <svg viewBox="0 0 16 16" aria-hidden="true">
+            @if (large()) {
+              <path d="M6 1v5H1M10 1v5h5M6 15v-5H1M10 15v-5h5" />
+            } @else {
+              <path d="M1 6V1h5M15 6V1h-5M1 10v5h5M15 10v5h-5" />
+            }
+          </svg>
+        </button>
+      }
+      @if (gone()) {
+        <p class="muted">{{ m.alreadyAnswered }}</p>
+      }
+      @switch (session().question?.kind) {
+        @case ('ask') {
+          <app-ask-form [session]="session()" />
+        }
+        @case ('round') {
+          <app-round-form [session]="session()" />
+        }
+        @default {
+          <form (submit)="$event.preventDefault(); reply.send()">
+            <textarea
+              rows="2"
+              [attr.aria-label]="m.form.replyPlaceholder"
+              [placeholder]="hint() ? m.peek.hints[hint()!] : m.form.replyPlaceholder"
+              [disabled]="hint() !== null || reply.sending()"
+              [value]="reply.value()"
+              (input)="reply.edit($any($event.target).value)"
+              (keydown)="onKey($event)"
+            ></textarea>
+            @if (reply.delivery.choosable()) {
+              <app-delivery-toggle [(delivery)]="reply.delivery.picked" />
+            }
+            <button type="submit" [disabled]="hint() !== null || !reply.ready()">
+              {{ reply.sending() ? m.form.sending : m.form.send }}
+            </button>
+            @if (reply.error(); as reason) {
+              <p class="error">{{ m.form.sendFailed(reason) }}</p>
+            }
+          </form>
+        }
+      }
+    </div>
+  }
+</dialog>

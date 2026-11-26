@@ -1,0 +1,21 @@
+@let m = i18n.messages().board.session;
+@if (placed(); as p) {
+  <section class="session">
+    @if (view(); as v) {
+      <div class="head">
+        <h3>{{ m.heading }}</h3>
+        @if (!v.shared) {
+          <app-peek [session]="p.session" [starId]="id()" />
+        }
+      </div>
+      @if (v.line) {
+        <p class="state">{{ v.line }}</p>
+      }
+      @for (note of v.notes; track note) {
+        <p class="note">{{ note }}</p>
+      }
+    }
+  </section>
+} @else if (claimed()) {
+  <p class="note">{{ m.noLinkedSession }}</p>
+}

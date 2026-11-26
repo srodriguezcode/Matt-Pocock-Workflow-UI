@@ -1,0 +1,128 @@
+@let codes = i18n.messages().board.codes;
+@let m = i18n.messages().board.sheet;
+@if (shown()) {
+  <div #sheet class="sheet" role="dialog" aria-modal="true" [attr.aria-label]="title()">
+    <div class="head">
+      <b>{{ title() }}</b>
+      <span class="note">{{ skill() }}</span>
+    </div>
+    @if (launch(); as l) {
+      <div class="progress">
+        @for (step of l.plan.steps; track $index) {
+          <div class="line" [class]="l.steps[$index]">
+            <span class="icon">{{ stepIcon(l.steps[$index] ?? 'waiting') }}</span>
+            <span>{{ word(codes.stepActions, step.action) }}</span>
+          </div>
+          @if (l.steps[$index] === 'failed' && l.stderr) {
+            <pre class="err">{{ l.stderr }}</pre>
+          }
+        }
+        @if (l.taken) {
+          <p class="why">{{ word(codes.takenReasons, l.taken) }}</p>
+        }
+        @if (l.rollbacks.length) {
+          <div class="rolled">{{ m.rolledBack }}</div>
+          @for (r of l.rollbacks; track $index) {
+            <div class="line" [class.undone]="r.ok" [class.failed]="!r.ok">
+              <span class="icon">{{ rollbackIcon(r) }}</span>
+              <code>{{ r.command }}</code>
+            </div>
+            @if (r.stderr) {
+              <pre class="err">{{ r.stderr }}</pre>
+            }
+          }
+        }
+        @if (outcome(l, codes, m); as line) {
+          <p [class]="l.end?.ok ? 'ok' : 'why'">{{ line }}</p>
+        }
+        @if (attachCommand(l, m); as attach) {
+          <p class="note">{{ m.attach }}</p>
+          <div class="cmd">
+            <button type="button" class="copy" (click)="copy(attach)">
+              {{ copied() ? m.copied : m.copy }}
+            </button>
+            <pre>{{ attach }}</pre>
+          </div>
+        }
+        @if (l.end) {
+          <div class="row">
+            <button type="button" class="btn quiet" (click)="dismiss()">{{ m.dismiss }}</button>
+          </div>
+        }
+      </div>
+    } @else if (option(); as o) {
+      @if (!o.enabled) {
+        <p class="why"><span class="no">⊘</span> {{ word(codes.startReasons, o.reason) }}</p>
+      } @else {
+        @if (plan(); as p) {
+          @if (p.ok) {
+            <ol class="steps">
+              @for (step of p.plan.steps; track $index) {
+                <li>{{ word(codes.stepActions, step.action) }}</li>
+              }
+            </ol>
+          }
+          @if (p.ok && p.plan.branch && (p.plan.reuse.branch || p.plan.reuse.worktree)) {
+            <label class="base">
+              <span>{{ m.on }}</span>
+              <select disabled>
+                <option>{{ p.plan.branch }}</option>
+              </select>
+              <app-tip class="reused" [text]="m.worktreeExists">*</app-tip>
+            </label>
+          } @else if (resolved(); as r) {
+            <label class="base">
+              <span>{{ m.from }}</span>
+              <select #base (change)="pickBase(base.value)">
+                @for (b of baseOptions(); track b) {
+                  <option [value]="b" [selected]="b === selectedBase()">
+                    {{ 'origin/' + b }}{{ b === r.branch ? ' (' + baseNote() + ')' : '' }}
+                  </option>
+                }
+              </select>
+              @if (chosen()) {
+                <span class="override">{{ codes.baseSources.override }}</span>
+              }
+            </label>
+          }
+          @if (p.ok) {
+            <div class="cmd">
+              <button type="button" class="copy" (click)="copy(p.plan.command)">
+                {{ copied() ? m.copied : m.copy }}
+              </button>
+              <pre>{{ p.plan.command }}</pre>
+            </div>
+            @if (start.installNote) {
+              <app-install-note />
+              <div class="row">
+                <button #noteCancel type="button" class="btn quiet" (click)="cancel()">
+                  {{ m.cancel }}
+                </button>
+              </div>
+            } @else {
+              <div class="row">
+                <button type="button" class="btn quiet" (click)="cancel()">{{ m.cancel }}</button>
+                <button
+                  #go
+                  type="button"
+                  class="btn go"
+                  [disabled]="start.running()"
+                  (click)="confirm(p.plan)"
+                >
+                  {{ label() }} ▸
+                </button>
+              </div>
+            }
+          } @else {
+            <p class="why"><span class="no">⊘</span> {{ refusal(p) }}</p>
+            <div class="row">
+              <button type="button" class="btn quiet" (click)="cancel()">{{ m.cancel }}</button>
+            </div>
+          }
+        } @else {
+          <p class="note">{{ m.readingPlan }}</p>
+        }
+      }
+    }
+  </div>
+}

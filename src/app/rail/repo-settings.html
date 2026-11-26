@@ -1,0 +1,142 @@
+@let m = i18n.messages().board.rail.settings;
+<dialog #dialog (close)="reset()">
+  @if (repo(); as repo) {
+    <form (submit)="save($event)">
+      <h2>{{ repo.owner }}/{{ repo.name }}</h2>
+      <dl class="fixed">
+        <dt>{{ m.pathLabel }}</dt>
+        <dd>{{ repo.path }}</dd>
+        <dt>{{ m.repoLabel }}</dt>
+        <dd>{{ repo.owner }}/{{ repo.name }}</dd>
+      </dl>
+      <p class="note">{{ m.fixedNote }}</p>
+      <app-tile-editor [(letters)]="letters" [(useImage)]="useImage" [(image)]="image" />
+      <label>
+        {{ m.baseBranchLabel }}
+        <input
+          type="text"
+          [placeholder]="m.baseBranchPlaceholder"
+          [value]="baseBranch()"
+          (input)="baseBranch.set(text($event))"
+        />
+      </label>
+      <fieldset>
+        <legend>{{ m.prefixesLabel }}</legend>
+        <p class="note">{{ m.prefixesNote }}</p>
+        @for (row of rows(); track row.id; let i = $index, first = $first, last = $last) {
+          <div class="row">
+            <input
+              type="text"
+              [attr.aria-label]="m.prefixLabelField(i + 1)"
+              [placeholder]="m.labelPlaceholder"
+              [value]="row.label"
+              (input)="editRow(row.id, { label: text($event) })"
+              required
+            />
+            <input
+              type="text"
+              [attr.aria-label]="m.prefixField(i + 1)"
+              [placeholder]="m.prefixPlaceholder"
+              [value]="row.prefix"
+              (input)="editRow(row.id, { prefix: text($event) })"
+              required
+            />
+            <button
+              type="button"
+              class="icon"
+              [attr.aria-label]="m.moveUpAction(i + 1)"
+              [disabled]="first"
+              (click)="moveRow(i, -1)"
+            >
+              ↑
+            </button>
+            <button
+              type="button"
+              class="icon"
+              [attr.aria-label]="m.moveDownAction(i + 1)"
+              [disabled]="last"
+              (click)="moveRow(i, 1)"
+            >
+              ↓
+            </button>
+            <button
+              type="button"
+              class="icon"
+              [attr.aria-label]="m.removeRowAction(i + 1)"
+              (click)="removeRow(row.id)"
+            >
+              ×
+            </button>
+          </div>
+        }
+        <button type="button" class="add-row" (click)="addRow()">{{ m.addRowAction }}</button>
+      </fieldset>
+      <label>
+        {{ m.fallbackLabel }}
+        <input
+          type="text"
+          [value]="fallbackPrefix()"
+          (input)="fallbackPrefix.set(text($event))"
+          required
+        />
+        <span class="note">{{ m.fallbackNote }}</span>
+      </label>
+      <label>
+        {{ m.worktreeDirLabel }}
+        <input
+          type="text"
+          [placeholder]="defaultWorktreeDir(repo)"
+          [value]="worktreeDir()"
+          (input)="worktreeDir.set(text($event))"
+        />
+        <span class="note">{{ m.worktreeDirNote }}</span>
+      </label>
+      <fieldset>
+        <legend>{{ m.labelsLabel }}</legend>
+        <p class="note">{{ m.labelsNote }}</p>
+        @for (label of canonical; track label) {
+          <label class="remap">
+            <span>{{ label }}</span>
+            <input
+              type="text"
+              [placeholder]="label"
+              [value]="labels()[label] ?? ''"
+              (input)="editLabel(label, text($event))"
+            />
+          </label>
+        }
+      </fieldset>
+      @if (error(); as message) {
+        <p class="error">{{ message }}</p>
+      }
+      @if (confirming()) {
+        <div class="confirm">
+          <p id="remove-confirm">{{ m.confirmRemove(repo.owner + '/' + repo.name, repo.path) }}</p>
+          <div class="actions">
+            <button
+              #keep
+              type="button"
+              aria-describedby="remove-confirm"
+              (click)="confirming.set(false)"
+            >
+              {{ m.keepAction }}
+            </button>
+            <button type="button" class="danger" [disabled]="busy()" (click)="remove()">
+              {{ m.confirmRemoveAction }}
+            </button>
+          </div>
+        </div>
+      } @else {
+        <div class="actions">
+          <button type="button" class="remove" (click)="confirming.set(true)">
+            {{ m.removeAction }}
+          </button>
+          <button type="button" (click)="close()">{{ m.cancelAction }}</button>
+          <button type="submit" [disabled]="busy() || (useImage() && !image())">
+            {{ m.saveAction }}
+          </button>
+        </div>
+      }
+    </form>
+  }
+</dialog>

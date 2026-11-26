@@ -1,0 +1,17 @@
+.agents/
+.claude/
+.scratch/
+.env*
+!.env.example
+
+/dist
+/out-tsc
+/node_modules
+/.angular/cache
+/coverage
+npm-debug.log
+.idea/
+.vscode/
+.DS_Store
+/dist-demo
+/demo/out

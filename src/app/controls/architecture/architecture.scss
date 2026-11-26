@@ -1,0 +1,33 @@
+:host {
+  display: inline-flex;
+}
+
+.architecture {
+  height: 34px;
+  padding: 0 10px;
+  display: flex;
+  align-items: center;
+  border-radius: 9px;
+  border: 1px solid var(--border);
+  background: var(--chrome);
+  color: var(--text);
+  cursor: pointer;
+}
+
+.architecture:hover {
+  border-color: var(--muted);
+}
+
+.architecture[aria-disabled='true'] {
+  color: var(--muted);
+  cursor: not-allowed;
+}
+
+.architecture[aria-disabled='true']:hover {
+  border-color: var(--border);
+}
+
+.label,
+.note {
+  display: none;
+}
