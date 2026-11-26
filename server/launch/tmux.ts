@@ -8,10 +8,13 @@ import type { Cmd } from './commands.ts';
 const ENTER_DELAY_MS = 200;
 const TYPE_TIMEOUT_MS = 10_000;
 
-/** tmux forbids `.` and `:` in a name. */
+/**
+ * tmux forbids `.` and `:` in a name. A new session's `key` keeps a second one from killing the
+ * first, since `tmuxOpen` kills any session under the same name.
+ */
 export function tmuxName(repo: string, target: LaunchTarget): string {
   const hash = createHash('sha256').update(repo).digest('hex').slice(0, 6);
-  const id = 'id' in target ? `-${target.id}` : '';
+  const id = 'id' in target ? `-${target.id}` : 'key' in target ? `-${target.key}` : '';
   return `uaw-${basename(repo)}-${hash}-${target.kind}${id}`.replace(/[^\w-]/g, '_');
 }
 

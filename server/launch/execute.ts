@@ -130,7 +130,7 @@ export async function* executeStart(
       const result = await exec(cmd);
       const stderr = failure(cmd, result);
       if (stderr !== null) throw new Error(stderr);
-      if (target.kind === 'architecture') return null;
+      if (target.kind === 'architecture' || target.kind === 'session') return null;
       /** `osascript` prints the iTerm session id, or nothing when it could not read one. */
       const terminal = plan.tmux ?? (result.stdout.trim() || null);
       deps.sessions.launched({ repo: deps.checkout, target, cwd: plan.cwd, terminal });

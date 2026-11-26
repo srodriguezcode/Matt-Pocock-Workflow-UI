@@ -1,7 +1,14 @@
 import { join } from 'node:path';
 import type { BranchesResponse } from '@contract/api';
 import type { StartSkill } from '@contract/gap';
-import type { LaunchPlan, LaunchTarget, PlanResult, PlanStep, StartOption } from '@contract/launch';
+import type {
+  LaunchPlan,
+  LaunchTarget,
+  PlanResult,
+  PlanStep,
+  SessionTarget,
+  StartOption,
+} from '@contract/launch';
 import type { RepoConfig } from '@contract/repo';
 import type { Runtime } from '@contract/runtime';
 import type { IssueRef, Sky } from '@contract/sky';
@@ -43,10 +50,21 @@ export interface PlanInput {
   };
 }
 
+/** What a Start in the main checkout reads. It needs no Sky and claims nothing. */
+type CheckoutInput = Pick<PlanInput, 'repo' | 'target' | 'link' | 'runtime'>;
+
+/** A new session on the repo: plain `claude`, or its first message, with an optional skill before it. */
+export function planSession(input: CheckoutInput & { target: SessionTarget }): PlanResult {
+  const { skill, prompt } = input.target;
+  const line = [skill ? `/${skill}` : '', prompt?.trim() ?? ''].filter(Boolean).join(' ');
+  return mainCheckout(input, noClaims, line);
+}
+
 export function planStart(input: PlanInput): PlanResult {
   const { sky, target, option } = input;
+  if (target.kind === 'session') return planSession({ ...input, target });
   if (target.kind === 'architecture') {
-    return mainCheckout(input, [], '/improve-codebase-architecture');
+    return mainCheckout(input, noClaims, '/improve-codebase-architecture');
   }
   if (!option) return { ok: false, reason: { code: 'gone' } };
   if (!option.enabled) return { ok: false, reason: option.reason };
@@ -58,13 +76,13 @@ export function planStart(input: PlanInput): PlanResult {
   const arg = input.commands.skillArg;
   const wayfinder = (...refs: IssueRef[]) =>
     `/wayfinder ${refs.map((ref) => arg(ref, 'wayfinder')).join(' ')}`;
-  if (target.kind === 'map' && system) return mainCheckout(input, [], wayfinder(system));
+  if (target.kind === 'map' && system) return mainCheckout(input, noClaims, wayfinder(system));
   if (target.kind === 'split' && system) {
     const prompt = splitPrompt(input.repo, sky, system);
-    return mainCheckout(input, [], `/to-tickets ${arg(system, 'to-tickets')}`, prompt);
+    return mainCheckout(input, noClaims, `/to-tickets ${arg(system, 'to-tickets')}`, prompt);
   }
   if (target.kind === 'decision' && ticket && map) {
-    return mainCheckout(input, [ticket], wayfinder(map, ticket));
+    return mainCheckout(input, claimed(input, [ticket], []), wayfinder(map, ticket));
   }
   if (target.kind === 'system' && system) {
     return inWorktree(
@@ -85,13 +103,13 @@ export function planStart(input: PlanInput): PlanResult {
   return { ok: false, reason: { code: 'nothing-to-start' } };
 }
 
-function tmuxFor(input: PlanInput): string | null {
+function tmuxFor(input: CheckoutInput): string | null {
   if (input.runtime !== 'container') return null;
   return tmuxName(input.repo.path, input.target);
 }
 
 function commandFor(
-  input: PlanInput,
+  input: CheckoutInput,
   cwd: string,
   skill: string,
   prompt: string | null = null,
@@ -99,9 +117,16 @@ function commandFor(
   return sessionCommand(cwd, skill, sessionLink(input), prompt);
 }
 
+interface Claimed {
+  ids: string[];
+  steps: PlanStep[];
+}
+
+const noClaims: Claimed = { ids: [], steps: [] };
+
 function mainCheckout(
-  input: PlanInput,
-  claims: IssueRef[],
+  input: CheckoutInput,
+  claims: Claimed,
   skill: string,
   prompt: string | null = null,
 ): PlanResult {
@@ -118,8 +143,8 @@ function mainCheckout(
     cwd,
     command,
     tmux,
-    claims: claims.map((c) => c.id),
-    steps: [...claimSteps(input, claims, []), terminalStep(command, tmux)],
+    claims: claims.ids,
+    steps: [...claims.steps, terminalStep(command, tmux)],
   };
   return { ok: true, plan };
 }
@@ -169,7 +194,7 @@ function inWorktree(
     tmux,
     claims: claims.map((c) => c.id),
     steps: [
-      ...claimSteps(input, claims, [baseStep]),
+      ...claimed(input, claims, [baseStep]).steps,
       { key: 'fetch', action: { code: 'fetch' }, commands: [show(fetchOrigin)] },
       ...(input.runtime === 'container' ? [pruneStep] : []),
       worktreeStep,
@@ -179,16 +204,16 @@ function inWorktree(
   return { ok: true, plan };
 }
 
-function sessionLink({ link, repo, target }: PlanInput): SessionLink | null {
-  if (!link || target.kind === 'architecture') return null;
+function sessionLink({ link, repo, target }: CheckoutInput): SessionLink | null {
+  if (!link || target.kind === 'architecture' || target.kind === 'session') return null;
   return { settingsPath: link.settingsPath, target: encodeTarget({ repo: repo.path, target }) };
 }
 
-function claimSteps(input: PlanInput, claims: IssueRef[], beforeClaim: PlanStep[]): PlanStep[] {
-  if (claims.length === 0) return beforeClaim;
-  const handles = claims.map((c) => c.handle);
+function claimed(input: PlanInput, claims: IssueRef[], beforeClaim: PlanStep[]): Claimed {
   const ids = claims.map((c) => c.id);
-  return [
+  if (claims.length === 0) return { ids, steps: beforeClaim };
+  const handles = claims.map((c) => c.handle);
+  const steps: PlanStep[] = [
     {
       key: 'reread',
       action: { code: 'reread', handles },
@@ -201,6 +226,7 @@ function claimSteps(input: PlanInput, claims: IssueRef[], beforeClaim: PlanStep[
       commands: ids.map((id) => input.commands.claim(id)),
     },
   ];
+  return { ids, steps };
 }
 
 function terminalStep(command: string, tmux: string | null): PlanStep {

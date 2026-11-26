@@ -76,6 +76,17 @@ describe('prepareStart', () => {
     ]);
   });
 
+  it('plans a new session without reading the Sky, so a failed read does not stop it', async () => {
+    const runner = new FakeRunner().on(['gh', 'api', 'graphql'], { code: 1, stderr: 'down' });
+    const own = repoAt('/code/harbor-session');
+    const target = { kind: 'session', key: 'k1', prompt: 'hi' } as const;
+    const { result, sky } = await prepareStart(deps(runner, {}, own.path), own, target, null);
+    if (!result.ok) throw new Error(result.reason.code);
+    expect(sky).toBeNull();
+    expect(result.plan.command).toBe(`cd ${own.path} && claude "hi"`);
+    expect(runner.calls).toEqual([]);
+  });
+
   it('reads origin for a ticket Start', async () => {
     const runner = new FakeRunner()
       .on(['gh', 'api', 'graphql'], { stdout })

@@ -1,5 +1,6 @@
 import { Component, DestroyRef, inject, type OnInit } from '@angular/core';
 import { Architecture } from '@app/controls/architecture';
+import { NewSession } from '@app/controls/new-session';
 import { EmptyBoard } from '@app/controls/empty-board';
 import { Filter } from '@app/controls/filter';
 import { Gaps } from '@app/controls/gaps';
@@ -26,6 +27,7 @@ import { ThemeSwitch } from '@app/theme/theme-switch';
     Refresh,
     Gaps,
     Architecture,
+    NewSession,
     Notifications,
     Keys,
     Pill,

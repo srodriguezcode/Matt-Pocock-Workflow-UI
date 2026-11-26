@@ -352,3 +352,47 @@ describe('.scratch/ Starts', () => {
     );
   });
 });
+
+describe('New session Start', () => {
+  const session = (fields: { prompt?: string; skill?: 'to-spec' }) =>
+    plan({ sky: sky({}), target: { kind: 'session', key: 'k1', ...fields }, option: undefined });
+
+  it('opens plain claude in the main checkout when the box is empty and no skill is picked', () => {
+    const p = session({});
+    expect(p).toMatchObject({
+      skill: '',
+      base: null,
+      branch: null,
+      worktree: null,
+      cwd: '/code/app',
+      command: 'cd /code/app && claude',
+      claims: [],
+    });
+    expect(p.steps.map((step) => [step.key, step.action])).toEqual([
+      ['terminal', { code: 'open-tab' }],
+    ]);
+  });
+
+  it('sends the text alone as the first message', () => {
+    expect(session({ prompt: 'Add dark mode' }).command).toBe(
+      'cd /code/app && claude "Add dark mode"',
+    );
+  });
+
+  it('puts the skill before the text', () => {
+    expect(session({ prompt: 'Add dark mode', skill: 'to-spec' }).command).toBe(
+      'cd /code/app && claude "/to-spec Add dark mode"',
+    );
+    expect(session({ skill: 'to-spec' }).command).toBe('cd /code/app && claude "/to-spec"');
+  });
+
+  it('escapes quotes, $ and backticks in the text', () => {
+    expect(session({ prompt: 'say "hi" to $USER and `whoami` \\ ok' }).command).toBe(
+      'cd /code/app && claude "say \\"hi\\" to \\$USER and \\`whoami\\` \\\\ ok"',
+    );
+  });
+
+  it('treats a blank box as empty', () => {
+    expect(session({ prompt: '  \n ' }).command).toBe('cd /code/app && claude');
+  });
+});

@@ -40,6 +40,7 @@ const targets: [string, LaunchTarget][] = [
   ['split', { kind: 'split', id: '9' }],
   ['map', { kind: 'map', id: '9' }],
   ['architecture', { kind: 'architecture' }],
+  ['new session', { kind: 'session', key: 'k1' }],
 ];
 
 describe('planStart by runtime', () => {
@@ -61,6 +62,16 @@ describe('planStart by runtime', () => {
     const result = plan({ kind: 'architecture' }, 'container');
     if (!result.ok) throw new Error(result.reason.code);
     expect(result.plan.tmux).toMatch(/^uaw-app-[0-9a-f]{6}-architecture$/);
+  });
+
+  it('names each new session apart, so a second one never kills the first', () => {
+    const name = (key: string) => {
+      const result = plan({ kind: 'session', key }, 'container');
+      if (!result.ok) throw new Error(result.reason.code);
+      return result.plan.tmux;
+    };
+    expect(name('k1')).toMatch(/^uaw-app-[0-9a-f]{6}-session-k1$/);
+    expect(name('k2')).not.toBe(name('k1'));
   });
 
   it('keeps the Mac tab', () => {

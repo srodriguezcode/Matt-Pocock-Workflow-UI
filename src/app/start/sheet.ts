@@ -8,7 +8,7 @@ import {
   signal,
   viewChild,
 } from '@angular/core';
-import type { LaunchPlan } from '@contract/launch';
+import type { LaunchPlan, NewSessionSkill } from '@contract/launch';
 import { ApiFailure } from '@app/api/api';
 import { copyText } from '@app/controls/clipboard';
 import { Tip } from '@app/controls/tip';
@@ -22,11 +22,11 @@ import { Board } from '@app/state/board';
 import { baseNote, sheetTitle } from '@app/start/face';
 import { measureStage, placeCornerSheet, placeSheet } from '@app/start/place';
 import { attachCommand, outcome, rollbackIcon, stepIcon } from '@app/start/progress';
-import { ARCHITECTURE, START, Start, type Planned } from '@app/start/start';
+import { isRepoStart, SESSION, START, Start, type Planned } from '@app/start/start';
 
 const COPIED_MS = 1200;
 
-const FOCUSABLE = 'button:not([disabled]), select:not([disabled]), a[href]';
+const FOCUSABLE = 'button:not([disabled]), select:not([disabled]), textarea, a[href]';
 
 @Component({
   selector: 'app-sheet',
@@ -44,6 +44,7 @@ export class StartSheet {
   private readonly sheet = viewChild<ElementRef<HTMLElement>>('sheet');
   private readonly goButton = viewChild<ElementRef<HTMLButtonElement>>('go');
   private readonly noteCancel = viewChild<ElementRef<HTMLButtonElement>>('noteCancel');
+  private readonly promptBox = viewChild<ElementRef<HTMLTextAreaElement>>('prompt');
 
   protected readonly stepIcon = stepIcon;
   protected readonly rollbackIcon = rollbackIcon;
@@ -52,7 +53,13 @@ export class StartSheet {
   protected readonly word = word;
 
   protected readonly id = this.start.sheet;
-  private readonly cornered = computed(() => this.id() === ARCHITECTURE);
+  private readonly cornered = computed(() => {
+    const id = this.id();
+    return id !== null && isRepoStart(id);
+  });
+  protected readonly session = computed(() => this.id() === SESSION);
+  protected readonly sessionTarget = this.start.sessionTarget;
+  protected readonly sessionSkills = this.board.sessionSkills;
   protected readonly shown = computed(
     () => this.id() !== null && (this.cornered() || this.view.anchor() !== null),
   );
@@ -112,7 +119,7 @@ export class StartSheet {
       if (this.id() !== null) this.focusPending = true;
     });
     afterRenderEffect(() => {
-      const first = (this.goButton() ?? this.noteCancel())?.nativeElement;
+      const first = (this.promptBox() ?? this.goButton() ?? this.noteCancel())?.nativeElement;
       if (!first || !this.focusPending) return;
       this.focusPending = false;
       first.focus();
@@ -132,6 +139,15 @@ export class StartSheet {
           : placeCornerSheet(size, bounds);
       el.style.transform = `translate(${at.x}px, ${at.y}px)`;
     });
+  }
+
+  protected typePrompt(prompt: string): void {
+    this.start.editSession({ prompt });
+  }
+
+  /** The `<select>` gives `''` for the "No skill" option. */
+  protected pickSkill(skill: string): void {
+    this.start.editSession({ skill: (skill || null) as NewSessionSkill | null });
   }
 
   protected pickBase(branch: string): void {

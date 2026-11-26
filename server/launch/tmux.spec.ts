@@ -13,6 +13,15 @@ describe('tmuxName', () => {
     );
   });
 
+  it('differs for two new sessions in the same repo', () => {
+    expect(tmuxName('/code/app', { kind: 'session', key: 'mabc1' })).toBe(
+      'uaw-app-3258da-session-mabc1',
+    );
+    expect(tmuxName('/code/app', { kind: 'session', key: 'mabc2' })).toBe(
+      'uaw-app-3258da-session-mabc2',
+    );
+  });
+
   it('differs for the same ticket in two repos, even with the same folder name', () => {
     const twelve = { kind: 'ticket', id: '12' } as const;
     expect(tmuxName('/repos/me/app', twelve)).toBe('uaw-app-c5cf46-ticket-12');

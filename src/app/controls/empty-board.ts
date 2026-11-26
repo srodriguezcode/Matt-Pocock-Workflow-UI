@@ -1,6 +1,7 @@
 import { Component, inject, input, output } from '@angular/core';
 import type { Gap } from '@contract/gap';
 import { GapList } from '@app/controls/gaps/gap-list';
+import { NewSession } from '@app/controls/new-session';
 import { I18nService } from '@app/i18n/i18n.service';
 
 /**
@@ -9,7 +10,7 @@ import { I18nService } from '@app/i18n/i18n.service';
  */
 @Component({
   selector: 'app-empty-board',
-  imports: [GapList],
+  imports: [GapList, NewSession],
   templateUrl: './empty-board.html',
   styleUrl: './empty-board.scss',
 })

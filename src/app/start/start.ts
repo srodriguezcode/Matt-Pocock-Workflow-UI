@@ -3,7 +3,9 @@ import type { StartRequest } from '@contract/api';
 import type {
   LaunchPlan,
   LaunchTarget,
+  NewSessionSkill,
   PlanResult,
+  SessionTarget,
   StartLabel,
   StartOption,
 } from '@contract/launch';
@@ -29,6 +31,15 @@ const ARCHITECTURE_OPTION: StartOption = {
   target: { kind: 'architecture' },
   label: { code: 'architecture' },
 };
+
+/** The sheet key of a new session, kept apart from star ids the same way as `ARCHITECTURE`. */
+export const SESSION = '\0session';
+
+/** Each opening gets its own, so two new sessions in the container never share a tmux name. */
+const sessionKey = () => Date.now().toString(36);
+
+/** A sheet key that names no star. Its sheet sits in the corner, not on the sky. */
+export const isRepoStart = (id: string) => id === ARCHITECTURE || id === SESSION;
 
 export type Planned = PlanResult | { ok: false; error: unknown };
 
@@ -63,8 +74,12 @@ export class Start {
   });
   readonly sheet = computed(() => {
     const open = this.opened();
-    return open !== null && (open === ARCHITECTURE || open === this.selected()) ? open : null;
+    return open !== null && (isRepoStart(open) || open === this.selected()) ? open : null;
   });
+
+  private readonly session = signal<SessionTarget>({ kind: 'session', key: sessionKey() });
+  /** The first message and skill typed into the new-session sheet. */
+  readonly sessionTarget = this.session.asReadonly();
 
   private readonly planned = signal<Planned | null>(null);
   private readonly resolvedBase = signal<LaunchPlan['base']>(null);
@@ -102,7 +117,7 @@ export class Start {
     effect(() => {
       const open = this.opened();
       if (open === null) return;
-      const unselected = open !== ARCHITECTURE && open !== this.selected();
+      const unselected = !isRepoStart(open) && open !== this.selected();
       if (unselected || !this.opens(open)) untracked(() => this.close());
     });
     effect(() => {
@@ -113,7 +128,12 @@ export class Start {
 
   /** The server's option, disabled by the first Start-blocking Gap that covers it. */
   optionFor(id: string): StartOption | null {
-    const option = id === ARCHITECTURE ? this.architecture() : this.board.starts()[id];
+    const option =
+      id === ARCHITECTURE
+        ? this.architecture()
+        : id === SESSION
+          ? this.newSession()
+          : this.board.starts()[id];
     if (!option?.enabled) return option ?? null;
     const gap = this.board
       .gaps()
@@ -129,6 +149,29 @@ export class Start {
 
   private architecture(): StartOption | null {
     return this.board.sky() && !this.board.fatalGap() ? ARCHITECTURE_OPTION : null;
+  }
+
+  /**
+   * Needs a valid Tracker, not a Sky: a failed read leaves it open. `readFailure` is not in
+   * `gaps`, so only a missing Tracker or machine hides it.
+   */
+  private newSession(): StartOption | null {
+    if (!this.board.activePath() || this.board.gaps().some((g) => g.tier === 'fatal')) return null;
+    return { enabled: true, target: this.session(), label: { code: 'session' } };
+  }
+
+  /** An empty message or `null` skill drops the field, so the plan runs plain `claude`. */
+  editSession(change: { prompt?: string; skill?: NewSessionSkill | null }): void {
+    this.session.update(({ kind, key, prompt, skill }) => {
+      const nextPrompt = change.prompt ?? prompt;
+      const nextSkill = change.skill === undefined ? skill : change.skill;
+      return {
+        kind,
+        key,
+        ...(nextPrompt ? { prompt: nextPrompt } : {}),
+        ...(nextSkill ? { skill: nextSkill } : {}),
+      };
+    });
   }
 
   launchFor(id: string): Launch | null {
@@ -199,6 +242,7 @@ export class Start {
       this.spin(key, false);
     }
     if (phase(launch) !== 'done') return;
+    if (id === SESSION) this.session.set({ kind: 'session', key: sessionKey() });
     const done = launch;
     await this.board.readSky({ fresh: true });
     if (done.plan.tmux !== null) return;

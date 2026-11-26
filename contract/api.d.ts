@@ -1,5 +1,5 @@
 import type { Gap } from './gap.d.ts';
-import type { StartOption, LaunchTarget } from './launch.d.ts';
+import type { LaunchTarget, NewSessionSkill, StartOption } from './launch.d.ts';
 import type { Theme, Tile } from './repo.d.ts';
 import type { Runtime } from './runtime.d.ts';
 import type { ClosedChild, Dependency, Sky } from './sky.d.ts';
@@ -94,6 +94,8 @@ export interface FlagRequest {
 
 export interface GapsResponse {
   gaps: Gap[];
+  /** The new-session skills installed for the named repo. Empty with no repo. */
+  sessionSkills: NewSessionSkill[];
 }
 
 /** `GET` and `PUT /api/settings`: the per-machine choices that are not about one repo. */

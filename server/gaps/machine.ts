@@ -5,7 +5,15 @@ import type { FileSystem } from '#server/core/fs.ts';
 import type { CommandRunner } from '#server/core/runner.ts';
 import { gap } from './build.ts';
 
-const ALL_KINDS: LaunchKind[] = ['ticket', 'system', 'decision', 'map', 'split', 'architecture'];
+const ALL_KINDS: LaunchKind[] = [
+  'ticket',
+  'system',
+  'decision',
+  'map',
+  'split',
+  'architecture',
+  'session',
+];
 
 export async function checkMachine(
   runner: CommandRunner,

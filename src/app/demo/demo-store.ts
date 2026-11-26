@@ -21,7 +21,9 @@ export async function loadSnapshot(
 }
 
 const idOf = (target: LaunchTarget) => ('id' in target ? target.id : null);
-const sameTarget = (a: LaunchTarget, b: LaunchTarget) => a.kind === b.kind && idOf(a) === idOf(b);
+/** Every new session shares the one bare plan the snapshot holds, whatever its key or message. */
+const sameTarget = (a: LaunchTarget, b: LaunchTarget) =>
+  a.kind === b.kind && (a.kind === 'session' || idOf(a) === idOf(b));
 
 export class DemoStore {
   private readonly snapshot: DemoSnapshot;
@@ -49,7 +51,7 @@ export class DemoStore {
   }
 
   gaps(path: string | null): GapsResponse | null {
-    if (path === null) return { gaps: [] };
+    if (path === null) return { gaps: [], sessionSkills: [] };
     return copy(this.find(path)?.gaps);
   }
 
@@ -62,6 +64,12 @@ export class DemoStore {
     const repo = this.find(request.repo);
     if (!repo) return null;
     const planned = repo.plans.find((p) => sameTarget(p.target, request.target));
+    if (planned?.result.ok) {
+      return {
+        ok: true,
+        plan: { ...structuredClone(planned.result.plan), target: request.target },
+      };
+    }
     if (planned) return structuredClone(planned.result);
     const id = idOf(request.target);
     const option = id === null ? undefined : repo.sky.starts[id];

@@ -17,7 +17,7 @@ import { Api } from '@app/api/api';
 import { SkyView } from '@app/sky/sky-view';
 import { INSTALL_NOTE } from '@app/install-note/install-note';
 import { Board } from '@app/state/board';
-import { ARCHITECTURE, Start } from './start';
+import { ARCHITECTURE, SESSION, Start } from './start';
 
 const REPO = '/repo';
 const target = { kind: 'ticket', id: '613' } as const;
@@ -308,6 +308,54 @@ describe('Start', () => {
       expect(start.opens(ARCHITECTURE)).toBe(false);
     });
   });
+  describe('the new-session Start', () => {
+    const sessionPlan = (): LaunchPlan => ({
+      ...plan('main'),
+      target: start.sessionTarget(),
+      base: null,
+      claims: [],
+      steps: [],
+    });
+
+    it('opens with no Sky, and is hidden under a fatal Gap', () => {
+      expect(start.opens(SESSION)).toBe(true);
+      board.gaps.set([gap({ tier: 'fatal', problem: { code: 'gh-missing' }, blocks: [] })]);
+      expect(start.optionFor(SESSION)).toBeNull();
+    });
+
+    it('re-plans when the first message or the skill changes', () => {
+      start.open(SESSION);
+      tick();
+      start.editSession({ prompt: 'Add dark mode' });
+      tick();
+      start.editSession({ skill: 'to-spec' });
+      tick();
+      start.editSession({ prompt: '', skill: null });
+      tick();
+      const key = start.sessionTarget().key;
+      expect(api.planCalls.map((c) => c.request.target)).toEqual([
+        { kind: 'session', key },
+        { kind: 'session', key, prompt: 'Add dark mode' },
+        { kind: 'session', key, prompt: 'Add dark mode', skill: 'to-spec' },
+        { kind: 'session', key },
+      ]);
+    });
+
+    it('takes a new key and an empty box after a Start opens', async () => {
+      vi.useFakeTimers();
+      start.open(SESSION);
+      start.editSession({ prompt: 'hi' });
+      tick();
+      const first = start.sessionTarget().key;
+      vi.advanceTimersByTime(5);
+      api.events = [{ type: 'end', ok: true, outcome: { code: 'opened', command: 'claude' } }];
+      await start.start(SESSION, sessionPlan());
+      expect(api.started[0]?.target).toEqual({ kind: 'session', key: first, prompt: 'hi' });
+      expect(start.sessionTarget().key).not.toBe(first);
+      expect(start.sessionTarget()).not.toHaveProperty('prompt');
+    });
+  });
+
   describe('a Start with a tmux name', () => {
     const inContainer: LaunchPlan = { ...plan('main'), tmux: 'agent-613' };
 

@@ -6,6 +6,7 @@ import { filter } from '@app/i18n/en/filter';
 import { gaps } from '@app/i18n/en/gaps';
 import { keys } from '@app/i18n/en/keys';
 import { layout } from '@app/i18n/en/layout';
+import { newSession } from '@app/i18n/en/new-session';
 import { panel } from '@app/i18n/en/panel';
 import { pill } from '@app/i18n/en/pill';
 import { rail } from '@app/i18n/en/rail';
@@ -33,6 +34,7 @@ export const englishMessages = {
     keys,
     layout,
     architecture,
+    newSession,
     codes,
     demo,
   },
