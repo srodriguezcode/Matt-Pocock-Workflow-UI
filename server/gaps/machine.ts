@@ -3,9 +3,10 @@ import type { Gap } from '@contract/gap';
 import type { LaunchKind } from '@contract/launch';
 import type { FileSystem } from '#server/core/fs.ts';
 import type { CommandRunner } from '#server/core/runner.ts';
+import { STAR_KINDS } from '#server/launch/parse.ts';
 import { gap } from './build.ts';
 
-const ALL_KINDS: LaunchKind[] = ['ticket', 'system', 'decision', 'map', 'split', 'architecture'];
+const ALL_KINDS: LaunchKind[] = [...STAR_KINDS, 'architecture', 'session'];
 
 export async function checkMachine(
   runner: CommandRunner,

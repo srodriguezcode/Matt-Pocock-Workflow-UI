@@ -4,7 +4,9 @@
   <div #sheet class="sheet" role="dialog" aria-modal="true" [attr.aria-label]="title()">
     <div class="head">
       <b>{{ title() }}</b>
-      <span class="note">{{ skill() }}</span>
+      @if (!session()) {
+        <span class="note">{{ skill() }}</span>
+      }
     </div>
     @if (launch(); as l) {
       <div class="progress">
@@ -54,6 +56,28 @@
       @if (!o.enabled) {
         <p class="why"><span class="no">⊘</span> {{ word(codes.startReasons, o.reason) }}</p>
       } @else {
+        @if (session()) {
+          @let ns = i18n.messages().board.newSession;
+          <label class="field">
+            <span>{{ ns.promptLabel }}</span>
+            <textarea
+              #prompt
+              rows="4"
+              [placeholder]="ns.promptPlaceholder"
+              [value]="sessionTarget().prompt ?? ''"
+              (input)="typePrompt(prompt.value)"
+            ></textarea>
+          </label>
+          <label class="base">
+            <span>{{ ns.skillLabel }}</span>
+            <select #skill (change)="pickSkill(skill.value)">
+              <option value="" [selected]="!sessionTarget().skill">{{ ns.noSkill }}</option>
+              @for (s of sessionSkills(); track s) {
+                <option [value]="s" [selected]="s === sessionTarget().skill">{{ '/' + s }}</option>
+              }
+            </select>
+          </label>
+        }
         @if (plan(); as p) {
           @if (p.ok) {
             <ol class="steps">

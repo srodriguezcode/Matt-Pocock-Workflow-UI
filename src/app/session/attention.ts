@@ -17,7 +17,7 @@ export class Attention {
 
   constructor() {
     effect(() => {
-      const count = attentionCount(this.dismissals.pending());
+      const count = attentionCount(this.dismissals.unseen());
       const { tabTitle } = this.i18n.messages().board.session;
       document.title = tabTitle(count, this.baseTitle);
       void this.setDot(count > 0);

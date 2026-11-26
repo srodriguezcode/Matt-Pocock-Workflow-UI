@@ -137,6 +137,7 @@ const startLabels: StartLabelWording = {
   system: ({ count }) => `Start all ${count}`,
   split: () => 'Split into tickets',
   architecture: () => 'Review architecture',
+  session: () => 'New session',
 };
 
 const startReasons: StartReasonWording = {

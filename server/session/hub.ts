@@ -1,6 +1,6 @@
 import { randomUUID } from 'node:crypto';
 import type { ApiErrorReason } from '@contract/api';
-import type { StarTarget } from '@contract/launch';
+import type { LinkedTarget, StarTarget } from '@contract/launch';
 import type {
   AnswerRequest,
   AnswerResponse,
@@ -20,7 +20,7 @@ import type { LaunchStore } from './launch-store.ts';
 import { afterHook, afterPoll, fromAgent, isWakePrompt, type StateCell } from './lifecycle.ts';
 import { boardAnswerLine, peekLine } from './peek.ts';
 import { parseRound } from './round.ts';
-import type { LinkTarget } from './target.ts';
+import { isStarTarget, sameTarget, type LinkTarget } from './target.ts';
 
 export interface HubDeps {
   now(): Date;
@@ -52,7 +52,7 @@ interface Hold {
 interface Linked {
   sessionId: string;
   repo: string;
-  target: StarTarget;
+  target: LinkedTarget;
   startedAt: Date;
   cell: StateCell;
   question: SessionQuestion | null;
@@ -103,7 +103,7 @@ export class SessionHub {
       .then(() => this.deps.launchStore.save([...this.launches]))
       .catch((error: unknown) => console.error(error));
     for (const session of this.sessions.values()) {
-      if (sameStar(launch, session)) this.emit({ type: 'status', session: this.status(session) });
+      if (sameLink(launch, session)) this.emit({ type: 'status', session: this.status(session) });
     }
   }
 
@@ -125,10 +125,13 @@ export class SessionHub {
     this.launches.splice(0, this.launches.length - MAX_LAUNCHES);
   }
 
+  /** Stars only: a new session holds no star a Start or a prune must respect. */
   liveTargets(): { repo: string; target: StarTarget }[] {
-    return [...this.sessions.values()]
-      .filter((s) => !FINAL.has(s.cell.state))
-      .map((s) => ({ repo: s.repo, target: s.target }));
+    return [...this.sessions.values()].flatMap((s) =>
+      !FINAL.has(s.cell.state) && isStarTarget(s.target)
+        ? [{ repo: s.repo, target: s.target }]
+        : [],
+    );
   }
 
   snapshot(): SessionView[] {
@@ -259,7 +262,7 @@ export class SessionHub {
   private link(sessionId: string, who: LinkTarget): Linked | null {
     const now = this.deps.now();
     for (const older of this.sessions.values()) {
-      if (older.repo !== who.repo || older.target.id !== who.target.id) continue;
+      if (older.repo !== who.repo || !sameTarget(older.target, who.target)) continue;
       older.hold?.end({ code: 'dropped' });
       this.sessions.delete(older.sessionId);
       this.replaced.add(older.sessionId);
@@ -381,12 +384,12 @@ export class SessionHub {
 
   /** Read at use, not at link: a Session's first hook can beat the end of its own Start. */
   private terminalOf(session: Linked): string | null {
-    return this.launches.findLast((l) => sameStar(l, session))?.terminal ?? null;
+    return this.launches.findLast((l) => sameLink(l, session))?.terminal ?? null;
   }
 }
 
-function sameStar(a: LinkTarget, b: LinkTarget): boolean {
-  return a.repo === b.repo && a.target.kind === b.target.kind && a.target.id === b.target.id;
+function sameLink(a: LinkTarget, b: LinkTarget): boolean {
+  return a.repo === b.repo && sameTarget(a.target, b.target);
 }
 
 function status(s: Linked, typeable: boolean): SessionStatus {

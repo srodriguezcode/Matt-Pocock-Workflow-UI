@@ -12,17 +12,24 @@ import { skyFor } from '#server/sky/read.ts';
 import { trackerFor } from '#server/tracker/pick.ts';
 import type { Tracker } from '#server/tracker/tracker.ts';
 import { localState } from './local.ts';
-import { planStart } from './plan.ts';
+import { planSession, planStart } from './plan.ts';
 
-/** `fresh` for a Start: the preview may plan from the cached Sky, the Start may not. */
+/**
+ * `fresh` for a Start: the preview may plan from the cached Sky, the Start may not. A new session
+ * reads no Sky, so it starts even when the read fails, and `sky` comes back `null`.
+ */
 export async function prepareStart(
   deps: Deps,
   repo: RepoConfig,
   target: LaunchTarget,
   base: string | null,
   options: { fresh?: boolean } = {},
-): Promise<{ result: PlanResult; tracker: Tracker; sky: Sky }> {
+): Promise<{ result: PlanResult; tracker: Tracker; sky: Sky | null }> {
   const tracker = await trackerFor(deps, repo);
+  if (target.kind === 'session') {
+    const result = planSession({ repo, target, link: deps.link, runtime: deps.runtime });
+    return { result, tracker, sky: null };
+  }
   const always =
     target.kind === 'ticket' || target.kind === 'system' || target.kind === 'architecture';
   const early = always
@@ -34,7 +41,7 @@ export async function prepareStart(
   const shown = boardStarts(starts, { live, repo: repo.path });
   const result = planStart({
     sky,
-    option: target.kind === 'architecture' ? undefined : shown[target.id],
+    option: 'id' in target ? shown[target.id] : undefined,
     repo,
     target,
     link: deps.link,

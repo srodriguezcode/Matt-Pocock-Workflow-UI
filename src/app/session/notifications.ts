@@ -1,5 +1,6 @@
 import type { RepoConfig } from '@contract/repo';
 import type { SessionView } from '@contract/session';
+import { starIdOf } from './place';
 import type { Sky } from '@contract/sky';
 
 export type NotificationReason = 'ask' | 'round' | 'reply' | 'permission' | 'finished';
@@ -17,7 +18,7 @@ export interface Notification {
   since: string;
 }
 
-/** Asking and Waiting Sessions across every repo, the longest waiting first. */
+/** Asking and Waiting star Sessions across every repo, the longest waiting first. A new session waits on its own button instead. */
 export function notificationsOf(
   sessions: Iterable<SessionView>,
   repos: RepoConfig[],
@@ -25,6 +26,7 @@ export function notificationsOf(
 ): Notification[] {
   const out: Notification[] = [];
   for (const session of sessions) {
+    if (session.target.kind === 'session') continue;
     const sky = active?.path === session.repo ? active.sky : null;
     const reason = reasonOf(session, sky);
     if (!reason) continue;
@@ -54,7 +56,8 @@ function reasonOf(session: SessionView, sky: Sky | null): NotificationReason | n
   if (session.state === 'asking') return kind === 'round' ? 'round' : 'ask';
   if (session.state !== 'waiting') return null;
   if (session.waiting === 'permission-prompt') return 'permission';
-  return sky && isClosed(session.target.id, sky) ? 'finished' : 'reply';
+  const id = starIdOf(session.target);
+  return sky && id !== null && isClosed(id, sky) ? 'finished' : 'reply';
 }
 
 /** The sky holds every open issue, so a target missing from it is closed. */

@@ -135,12 +135,13 @@ async function readBoard(
   const targets: LaunchTarget[] = [
     ...Object.values(starts).flatMap((option) => (option.enabled ? [option.target] : [])),
     { kind: 'architecture' },
+    { kind: 'session', key: 'demo' },
   ];
   const plans = targets.map((target) => ({
     target,
     result: planStart({
       sky,
-      option: target.kind === 'architecture' ? undefined : starts[target.id],
+      option: 'id' in target ? starts[target.id] : undefined,
       repo,
       target,
       link: { settingsPath: sessionSettingsPath(HOME) },

@@ -1,10 +1,10 @@
-import type { StarTarget } from '@contract/launch';
+import type { LinkedTarget } from '@contract/launch';
 import { decodeTarget, type LinkTarget } from './target.ts';
 
 /** A Start this board process opened, remembered so a hook without the target header can be matched. */
 export interface Launch {
   repo: string;
-  target: StarTarget;
+  target: LinkedTarget;
   cwd: string;
   /** The iTerm session id of the tab Start opened, or `null` when it could not be read. */
   terminal: string | null;

@@ -1,4 +1,4 @@
-import type { StarTarget } from './launch.d.ts';
+import type { LinkedTarget } from './launch.d.ts';
 
 export type SessionState = 'working' | 'asking' | 'waiting' | 'ended' | 'lost';
 
@@ -70,7 +70,7 @@ export type SessionNote = { code: 'timed-out' };
 export interface SessionStatus {
   sessionId: string;
   repo: string;
-  target: StarTarget;
+  target: LinkedTarget;
   state: SessionState;
   /** Set only while `state` is `waiting`. */
   waiting: WaitingKind | null;

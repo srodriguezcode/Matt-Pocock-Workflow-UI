@@ -31,7 +31,10 @@ export interface DemoRepoSnapshot {
   issues: Record<string, IssueDetail>;
   /** Keyed by System id, one per open System. */
   routes: Record<string, ClosedRoute>;
-  /** One per enabled Start and one for `architecture`. None has a Base override. */
+  /**
+   * One per enabled Start, one for `architecture` and one bare new session.
+   * None has a Base override.
+   */
   plans: DemoPlan[];
   /** Keyed by ticket id, one per open ticket that is not claimed. What `/api/release` answers. */
   refusals: Record<string, DemoRefusal>;

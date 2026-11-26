@@ -8,6 +8,7 @@ import type {
 } from '@contract/launch';
 import type { CommandRunner, RunResult } from '#server/core/runner.ts';
 import type { SessionHub } from '#server/session/hub.ts';
+import { linkedTarget } from '#server/session/target.ts';
 import type { Tracker } from '#server/tracker/tracker.ts';
 import {
   baseCheck,
@@ -142,10 +143,11 @@ export async function* executeStart(
       const result = await exec(cmd);
       const stderr = failure(cmd, result);
       if (stderr !== null) throw new Error(stderr);
-      if (target.kind === 'architecture') return null;
+      const linked = linkedTarget(target);
+      if (!linked) return null;
       /** `osascript` prints the iTerm session id, or nothing when it could not read one. */
       const terminal = plan.tmux ?? (result.stdout.trim() || null);
-      deps.sessions.launched({ repo: deps.checkout, target, cwd: plan.cwd, terminal });
+      deps.sessions.launched({ repo: deps.checkout, target: linked, cwd: plan.cwd, terminal });
       return null;
     },
   };

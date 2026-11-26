@@ -112,8 +112,8 @@ export interface SessionLink {
 }
 
 /**
- * The tab's line, `cd <dir> && claude "<skill>"`. Linked, it adds the target env var, `--settings`
- * and `BOARD_PROMPT`. `prompt` follows that, linked or not.
+ * The tab's line, `cd <dir> && claude "<skill>"`, or plain `claude` when `skill` is empty. Linked,
+ * it adds the target env var, `--settings` and `BOARD_PROMPT`. `prompt` follows that, linked or not.
  */
 export function sessionCommand(
   cwd: string,
@@ -121,7 +121,7 @@ export function sessionCommand(
   link: SessionLink | null = null,
   prompt: string | null = null,
 ): string {
-  const quoted = `"${skill.replace(/["\\$`]/g, '\\$&')}"`;
+  const quoted = skill ? ` "${skill.replace(/["\\$`]/g, '\\$&')}"` : '';
   const system = [link ? BOARD_PROMPT : null, prompt].filter((line) => line !== null).join(' ');
   const flags = [
     ...(link ? ['--settings', link.settingsPath] : []),
@@ -129,5 +129,5 @@ export function sessionCommand(
   ];
   const claude = commandLine('claude', flags);
   const env = link ? `${TARGET_ENV}=${commandLine('', [link.target]).trimStart()} ` : '';
-  return `${commandLine('cd', [cwd])} && ${env}${claude} ${quoted}`;
+  return `${commandLine('cd', [cwd])} && ${env}${claude}${quoted}`;
 }

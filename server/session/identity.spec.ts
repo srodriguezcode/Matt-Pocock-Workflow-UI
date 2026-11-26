@@ -27,13 +27,19 @@ describe('identify', () => {
   });
 
   it('matches a cwd deeper inside the worktree, not a sibling that shares its prefix', () => {
-    expect(identify(undefined, `${ticket42.cwd}/server`, [ticket42])?.target.id).toBe('42');
+    expect(identify(undefined, `${ticket42.cwd}/server`, [ticket42])?.target).toEqual({
+      kind: 'ticket',
+      id: '42',
+    });
     expect(identify(undefined, `${ticket42.cwd}0`, [ticket42])).toBeNull();
   });
 
   it('prefers the newest Start on the same worktree', () => {
     const retry: Launch = { ...ticket42, target: { kind: 'system', id: '40' } };
-    expect(identify(undefined, ticket42.cwd, [ticket42, retry])?.target.id).toBe('40');
+    expect(identify(undefined, ticket42.cwd, [ticket42, retry])?.target).toEqual({
+      kind: 'system',
+      id: '40',
+    });
   });
 
   it('never matches the main checkout by cwd, and ignores a hand-started session', () => {

@@ -1,12 +1,13 @@
 @let m = i18n.messages().board.session.notifications;
 @let list = items();
+@let active = count();
 <button
   type="button"
   class="bell"
-  [class.lit]="list.length > 0"
+  [class.lit]="active > 0"
   [attr.aria-expanded]="open()"
-  [attr.aria-label]="m.label(list.length)"
-  [title]="m.label(list.length)"
+  [attr.aria-label]="m.label(active)"
+  [title]="m.label(active)"
   (click)="toggle()"
 >
   <svg viewBox="0 0 16 16" aria-hidden="true">
@@ -14,15 +15,15 @@
     <path d="M6.5 14a1.5 1.5 0 0 0 3 0" />
   </svg>
   <span class="label">{{ i18n.messages().board.layout.menu.notifications }}</span>
-  @if (list.length > 0) {
-    <span class="count">{{ list.length }}</span>
+  @if (active > 0) {
+    <span class="count">{{ active }}</span>
   }
 </button>
 @if (open()) {
   <div class="list" role="menu">
     <h3>{{ m.heading }}</h3>
     @for (item of list; track item.sessionId) {
-      <div class="row">
+      <div class="row" [class.seen]="isSeen(item)">
         <button type="button" class="item" role="menuitem" (click)="go(item)">
           <span class="where">
             <span class="repo">{{ item.repoName }}</span>

@@ -1,6 +1,7 @@
 import { computed, inject, Injectable, signal } from '@angular/core';
 import type { ApiError, ClosedRoute, SkyResponse } from '@contract/api';
 import type { Gap } from '@contract/gap';
+import type { NewSessionSkill } from '@contract/launch';
 import type { RepoConfig } from '@contract/repo';
 import { Api, ApiFailure } from '@app/api/api';
 import { I18nService } from '@app/i18n/i18n.service';
@@ -46,6 +47,8 @@ export class Board {
   readonly reading = signal(false);
 
   readonly gaps = signal<Gap[]>([]);
+  /** The new-session skills installed for the active repo, read with its Gaps. */
+  readonly sessionSkills = signal<NewSessionSkill[]>([]);
   readonly fatalGap = computed(
     () => this.gaps().find((g) => g.tier === 'fatal') ?? this.readFailure()?.gap ?? null,
   );
@@ -145,10 +148,14 @@ export class Board {
   async checkGaps(): Promise<void> {
     const path = this.activePath();
     try {
-      const { gaps } = await this.api.gaps(path);
-      if (this.activePath() === path) this.gaps.set(gaps);
+      const reply = await this.api.gaps(path);
+      if (this.activePath() !== path) return;
+      this.gaps.set(reply.gaps);
+      this.sessionSkills.set(reply.sessionSkills);
     } catch {
-      if (this.activePath() === path) this.gaps.set([]);
+      if (this.activePath() !== path) return;
+      this.gaps.set([]);
+      this.sessionSkills.set([]);
     }
   }
 }

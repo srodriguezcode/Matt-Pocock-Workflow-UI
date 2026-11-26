@@ -4,5 +4,6 @@ export const layout = {
     refresh: 'Refresh',
     notifications: 'Notifications',
     architecture: 'Review architecture',
+    newSession: 'New session',
   },
 };

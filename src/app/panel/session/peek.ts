@@ -7,6 +7,7 @@ import {
   inject,
   input,
   linkedSignal,
+  output,
   signal,
   untracked,
   viewChild,
@@ -15,6 +16,7 @@ import type { SessionView } from '@contract/session';
 import { I18nService } from '@app/i18n/i18n.service';
 import { renderMarkdown } from '@app/panel/markdown';
 import { AnswerNotes } from '@app/session/answer-notes';
+import { Dismissals } from '@app/session/dismissals';
 import { SessionDialog } from '@app/session/session-dialog';
 import { injectAnswerDeps } from './answer-deps';
 import { replyKind } from './answers';
@@ -36,8 +38,12 @@ export class Peek {
   readonly session = input.required<SessionView>();
   /** The selected star. Selecting one whose Session is Asking opens the dialog over its panel. */
   readonly starId = input.required<string>();
+  /** Off for a new session: no panel holds a button, so the dialog opens on request alone. */
+  readonly trigger = input(true);
+  readonly closed = output<void>();
   private readonly notes = inject(AnswerNotes);
   private readonly requests = inject(SessionDialog);
+  private readonly dismissals = inject(Dismissals);
   private autoOpen = false;
   protected readonly open = signal(false);
   protected readonly reply = heldAnswer(injectAnswerDeps(), this.session, replyKind);
@@ -92,8 +98,14 @@ export class Peek {
   protected show(): void {
     const dialog = this.dialog()?.nativeElement;
     if (!dialog || dialog.open) return;
+    this.dismissals.markSeen(this.session());
     this.open.set(true);
     dialog.showModal();
+  }
+
+  protected onClose(): void {
+    this.open.set(false);
+    this.closed.emit();
   }
 
   protected close(): void {

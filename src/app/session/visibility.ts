@@ -1,10 +1,11 @@
 import type { SessionStatus, SessionView } from '@contract/session';
 import type { Sky } from '@contract/sky';
-import { placeSessions } from './place';
+import { placeSessions, starIdOf } from './place';
 
 export type EndedUnder = ReadonlyMap<string, string>;
 
-export function starFingerprint(sky: Sky, id: string): string | null {
+export function starFingerprint(sky: Sky, id: string | null): string | null {
+  if (id === null) return null;
   const ticket = sky.tickets.find((t) => t.id === id);
   if (ticket) return `${ticket.gate}|${ticket.claim?.holder ?? ''}|${ticket.claim?.since ?? ''}`;
   const system = sky.systems.find((s) => s.id === id);
@@ -23,7 +24,7 @@ export function recordEnded(
     const before = known.get(session.sessionId);
     if (before !== undefined) next.set(session.sessionId, before);
     else if (session.repo === repo) {
-      const now = starFingerprint(sky, session.target.id);
+      const now = starFingerprint(sky, starIdOf(session.target));
       if (now !== null) next.set(session.sessionId, now);
     }
   }
@@ -44,7 +45,7 @@ export function visibleSessions(
   return sessions.filter((session) => {
     if (session.state === 'ended') {
       const under = endedUnder.get(session.sessionId);
-      return under === undefined || under === starFingerprint(sky, session.target.id);
+      return under === undefined || under === starFingerprint(sky, starIdOf(session.target));
     }
     if (session.state === 'lost') {
       const starId = starOf.get(session.sessionId);

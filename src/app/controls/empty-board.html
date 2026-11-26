@@ -2,6 +2,7 @@
 @if (fatal(); as gap) {
   <h2>{{ m.noSkyHeading }}</h2>
   <app-gap-list [gaps]="[gap]" />
+  <app-new-session class="new-session" place="empty" />
 } @else {
   <h2>{{ m.noRepoHeading }}</h2>
   <p>{{ m.intro }}</p>

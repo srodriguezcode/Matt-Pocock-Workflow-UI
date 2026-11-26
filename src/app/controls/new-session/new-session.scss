@@ -1,0 +1,37 @@
+:host {
+  display: inline-flex;
+}
+
+.new-session {
+  height: 34px;
+  padding: 0 10px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border-radius: 9px;
+  border: 1px solid var(--border);
+  background: var(--chrome);
+  color: var(--text);
+  cursor: pointer;
+}
+
+.new-session:hover {
+  border-color: var(--muted);
+}
+
+.new-session[aria-disabled='true'] {
+  color: var(--muted);
+  cursor: not-allowed;
+}
+
+.new-session[aria-disabled='true']:hover {
+  border-color: var(--border);
+}
+
+.label {
+  display: none;
+}
+
+.wide .label {
+  display: inline;
+}

@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import type { RepoConfig } from '@contract/repo';
 import { FakeFs } from '#server/testing/fake-fs.ts';
-import { checkSkills } from './skills.ts';
+import { checkSkills, sessionSkills } from './skills.ts';
 
 const repo: RepoConfig = {
   path: '/code/app',
@@ -207,5 +207,21 @@ describe('checkSkills', () => {
       const gaps = await checkSkills(fs, repo, '/home/dev', '/board');
       expect(gaps.map((g) => g.id)).toContain('skill-implement');
     });
+  });
+});
+
+describe('sessionSkills', () => {
+  it('lists only the installed new-session skills, and raises no Gap for the rest', async () => {
+    const fs = new FakeFs({
+      '/code/app/.claude/skills/implement/SKILL.md': '',
+      '/code/app/.claude/skills/implement-ticket/SKILL.md': '',
+      '/code/app/.claude/skills/implement-parallel/SKILL.md': '',
+      '/code/app/.claude/skills/wayfinder/SKILL.md': '',
+      '/code/app/.claude/skills/to-tickets/SKILL.md': '',
+      '/code/app/.claude/skills/improve-codebase-architecture/SKILL.md': '',
+      '/home/dev/.claude/skills/triage/SKILL.md': '',
+    });
+    expect(await sessionSkills(fs, repo, '/home/dev')).toEqual(['wayfinder', 'triage']);
+    expect(await checkSkills(fs, repo, '/home/dev', '/board')).toEqual([]);
   });
 });

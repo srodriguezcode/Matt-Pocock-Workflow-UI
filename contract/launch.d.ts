@@ -3,15 +3,36 @@ import type { GapProblem } from './gap.d.ts';
 /** `split` is a Split frontier Spec: the Start runs `/to-tickets` on it. */
 export type StarKind = 'ticket' | 'system' | 'decision' | 'map' | 'split';
 
-/** `architecture` Starts on the repo itself and carries no star id. */
-export type LaunchKind = StarKind | 'architecture';
+/** `architecture` and `session` Start on the repo itself and carry no star id. */
+export type LaunchKind = StarKind | 'architecture' | 'session';
+
+/** The skills a new session may open with. The sheet offers only the installed ones. */
+export type NewSessionSkill = 'grill-with-docs' | 'to-spec' | 'wayfinder' | 'triage';
+
+/** `key` is unique per sheet opening. `prompt` is the first message, not a system prompt. */
+export interface SessionTarget {
+  kind: 'session';
+  key: string;
+  prompt?: string;
+  skill?: NewSessionSkill;
+}
 
 export interface StarTarget {
   kind: StarKind;
   id: string;
 }
 
-export type LaunchTarget = StarTarget | { kind: 'architecture' };
+export type LaunchTarget = StarTarget | { kind: 'architecture' } | SessionTarget;
+
+/** A new session as the board follows it. `title` is its first line cut short, `''` when empty. */
+export interface NewSessionRef {
+  kind: 'session';
+  key: string;
+  title: string;
+}
+
+/** What a linked Session belongs to: a star, or a new session on the repo. */
+export type LinkedTarget = StarTarget | NewSessionRef;
 
 /** `count` is the tickets a Frontier system starts. */
 export type StartLabel =
@@ -20,7 +41,8 @@ export type StartLabel =
   | { code: 'map' }
   | { code: 'system'; count: number }
   | { code: 'split' }
-  | { code: 'architecture' };
+  | { code: 'architecture' }
+  | { code: 'session' };
 
 /**
  * Why a star can't start, first match wins. `blockers` are handles, plus outside text on `blocked-from-outside`.

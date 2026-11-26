@@ -79,7 +79,7 @@ function shelf(): DemoRepoSnapshot {
     plans: [{ target: { kind: 'ticket', id: 'inbox/03' }, result: planned }],
     refusals: {},
     releases: {},
-    gaps: { gaps: [] },
+    gaps: { gaps: [], sessionSkills: [] },
     branches: { branches: ['main'], defaultBranch: 'main' },
   };
 }
@@ -219,7 +219,7 @@ describe('DemoStore', () => {
     expect(store.issue(PATH, 'inbox/03')?.title).toBe('Sort by title');
     expect(store.route(PATH, 'lend-books')?.systemId).toBe('lend-books');
     expect(store.branches(PATH)?.defaultBranch).toBe('main');
-    expect(store.gaps(PATH)).toEqual({ gaps: [] });
+    expect(store.gaps(PATH)).toEqual({ gaps: [], sessionSkills: [] });
   });
 
   it('answers nothing for a repo or id the snapshot lacks', () => {
@@ -230,7 +230,7 @@ describe('DemoStore', () => {
   });
 
   it('gives no machine Gaps when no repo is named', () => {
-    expect(new DemoStore(snapshot()).gaps(null)).toEqual({ gaps: [] });
+    expect(new DemoStore(snapshot()).gaps(null)).toEqual({ gaps: [], sessionSkills: [] });
   });
 
   it('plans a Start-able star and refuses the rest', () => {
@@ -243,6 +243,18 @@ describe('DemoStore', () => {
       reason: { code: 'ready-for-human' },
     });
     expect(plan({ kind: 'architecture' })).toEqual({ ok: false, reason: { code: 'gone' } });
+  });
+
+  it('answers every new session with the bare plan it holds, under the asked target', () => {
+    if (!planned.ok) throw new Error('fixture');
+    const bare = { ...planned.plan, target: { kind: 'session', key: 'demo' } as const };
+    const source = snapshot();
+    source.repos[0]!.plans.push({ target: bare.target, result: { ok: true, plan: bare } });
+    const target = { kind: 'session', key: 'k9', prompt: 'hi' } as const;
+    expect(new DemoStore(source).plan({ repo: PATH, target })).toEqual({
+      ok: true,
+      plan: { ...bare, target },
+    });
   });
 
   it('keeps its copy apart from the snapshot and from what it hands out', () => {
