@@ -278,23 +278,67 @@ describe('Decision and Map Starts', () => {
 
 describe('Architecture Start', () => {
   const target = { kind: 'architecture' } as const;
+  const review = `${WT}/architecture`;
+  const architecture = (fields: Partial<PlanInput> = {}) =>
+    plan({ sky: sky({}), target, option: undefined, ...fields });
 
-  it('runs the skill in the main checkout with no star, no claim and one step', () => {
-    const p = plan({ sky: sky({}), target, option: undefined });
+  it("runs the skill in a detached worktree at origin's default branch, with no claim", () => {
+    const p = architecture();
     expect(p).toMatchObject({
       target,
       skill: '/improve-codebase-architecture',
-      base: null,
+      base: { branch: 'main', source: 'default', systemId: null },
       branch: null,
-      worktree: null,
+      worktree: review,
       reuse: { branch: false, worktree: false },
-      cwd: '/code/app',
-      command: 'cd /code/app && claude "/improve-codebase-architecture"',
+      cwd: review,
+      command: `cd ${review} && claude "/improve-codebase-architecture"`,
       claims: [],
     });
-    expect(p.steps.map((step) => [step.key, step.action])).toEqual([
-      ['terminal', { code: 'open-tab' }],
+    expect(p.steps.map((s) => [s.key, s.action, s.commands])).toEqual([
+      [
+        'base',
+        { code: 'check-base', branch: 'main' },
+        ['git ls-remote --exit-code --heads origin main'],
+      ],
+      ['fetch', { code: 'fetch' }, ['git fetch origin']],
+      [
+        'worktree',
+        { code: 'worktree-detach', base: 'main' },
+        [`git worktree add --detach ${review} origin/main`],
+      ],
+      ['terminal', { code: 'open-tab' }, [expect.stringContaining('osascript -e')]],
     ]);
+  });
+
+  it("takes the repo's Base before origin's default branch", () => {
+    const p = architecture({ repo: repo({ baseBranch: 'develop' }) });
+    expect(p.base).toEqual({ branch: 'develop', source: 'repo', systemId: null });
+  });
+
+  it('takes the picked Base over the repo Base', () => {
+    const p = architecture({ repo: repo({ baseBranch: 'develop' }), base: 'release' });
+    expect(p.base).toEqual({ branch: 'release', source: 'override', systemId: null });
+    expect(p.steps[2]!.commands).toEqual([`git worktree add --detach ${review} origin/release`]);
+  });
+
+  it('refuses a Base that origin lacks', () => {
+    const result = planStart(input({ sky: sky({}), target, option: undefined, base: 'gone' }));
+    expect(result).toEqual({ ok: false, reason: { code: 'base-missing', branch: 'gone' } });
+  });
+
+  it('resets the existing review worktree to the Base instead of adding one', () => {
+    const p = architecture({ base: 'develop', local: { branches: [], worktrees: [review] } });
+    expect(p.reuse).toEqual({ branch: false, worktree: true });
+    expect(p.steps[2]).toEqual({
+      key: 'worktree',
+      action: { code: 'worktree-reset', base: 'develop' },
+      commands: [
+        `git -C ${review} reset --hard`,
+        `git -C ${review} clean -fd`,
+        `git -C ${review} checkout --detach origin/develop`,
+      ],
+    });
   });
 });
 

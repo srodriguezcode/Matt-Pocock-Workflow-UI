@@ -17,7 +17,9 @@ import {
   openTab,
   show,
   worktreeAdd,
+  worktreeDetach,
   worktreeRemove,
+  worktreeReset,
   type Cmd,
 } from './commands.ts';
 import { tmuxOpen } from './tmux.ts';
@@ -68,7 +70,7 @@ export async function* executeStart(
   const rereadAction = plan.steps.find((step) => step.key === 'reread')?.action;
   const handles = rereadAction?.code === 'reread' ? rereadAction.handles : [];
 
-  const actions: Record<PlanStep['key'], () => Promise<TakenReason | null>> = {
+  const actions: Record<PlanStep['key'], (step: PlanStep) => Promise<TakenReason | null>> = {
     reread: async () => {
       for (const [index, id] of plan.claims.entries()) {
         const taken = await deps.tracker.taken({ id, handle: handles[index]! });
@@ -108,8 +110,18 @@ export async function* executeStart(
       await deps.prune?.();
       return null;
     },
-    worktree: async () => {
-      if (!plan.worktree || !plan.branch || plan.reuse.worktree) return null;
+    worktree: async ({ action }) => {
+      if (!plan.worktree) return null;
+      /** A running review may hold this worktree, so a failed Start leaves it in place. */
+      if (action.code === 'worktree-reset') {
+        for (const cmd of worktreeReset(plan.worktree, action.base)) await run(cmd);
+        return null;
+      }
+      if (action.code === 'worktree-detach') {
+        await run(worktreeDetach(plan.worktree, action.base));
+        return null;
+      }
+      if (!plan.branch || plan.reuse.worktree) return null;
       const base = plan.reuse.branch ? null : (plan.base?.branch ?? null);
       try {
         await run(worktreeAdd(plan.worktree, plan.branch, base));
@@ -142,7 +154,7 @@ export async function* executeStart(
     yield { type: 'step', index, key: step.key, status: 'running' };
     let taken: TakenReason | null;
     try {
-      taken = await actions[step.key]();
+      taken = await actions[step.key](step);
     } catch (error) {
       const stderr = (error as Error).message;
       yield { type: 'step', index, key: step.key, status: 'failed', stderr };

@@ -73,6 +73,8 @@ export type StepAction =
   | { code: 'worktree-resume'; branch: string }
   | { code: 'worktree-on-branch'; branch: string }
   | { code: 'worktree-new'; branch: string; base: string }
+  | { code: 'worktree-detach'; base: string }
+  | { code: 'worktree-reset'; base: string }
   | { code: 'prune' }
   | { code: 'open-tab' }
   | { code: 'open-tmux'; name: string };

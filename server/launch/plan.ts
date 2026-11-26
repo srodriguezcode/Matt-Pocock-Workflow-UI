@@ -13,6 +13,8 @@ import {
   sessionCommand,
   show,
   worktreeAdd,
+  worktreeDetach,
+  worktreeReset,
   type SessionLink,
 } from './commands.ts';
 import { encodeTarget } from '#server/session/target.ts';
@@ -46,7 +48,7 @@ export interface PlanInput {
 export function planStart(input: PlanInput): PlanResult {
   const { sky, target, option } = input;
   if (target.kind === 'architecture') {
-    return mainCheckout(input, [], '/improve-codebase-architecture');
+    return architectureWorktree(input);
   }
   if (!option) return { ok: false, reason: { code: 'gone' } };
   if (!option.enabled) return { ok: false, reason: option.reason };
@@ -130,7 +132,7 @@ function inWorktree(
   claims: IssueRef[],
   skill: string,
 ): PlanResult {
-  const { sky, repo, local } = input;
+  const { repo, local } = input;
   const base = resolveBase(input, star);
   if (!input.origin.branches.includes(base.branch)) {
     return { ok: false, reason: { code: 'base-missing', branch: base.branch } };
@@ -143,11 +145,6 @@ function inWorktree(
   };
   const command = commandFor(input, worktree, skill);
   const tmux = tmuxFor(input);
-  const baseStep: PlanStep = {
-    key: 'base',
-    action: { code: 'check-base', branch: base.branch },
-    commands: [show(baseCheck(base.branch))],
-  };
   const worktreeStep: PlanStep = reuse.worktree
     ? { key: 'worktree', action: { code: 'worktree-resume', branch }, commands: [] }
     : {
@@ -169,8 +166,8 @@ function inWorktree(
     tmux,
     claims: claims.map((c) => c.id),
     steps: [
-      ...claimSteps(input, claims, [baseStep]),
-      { key: 'fetch', action: { code: 'fetch' }, commands: [show(fetchOrigin)] },
+      ...claimSteps(input, claims, [baseStep(base.branch)]),
+      fetchStep,
       ...(input.runtime === 'container' ? [pruneStep] : []),
       worktreeStep,
       terminalStep(command, tmux),
@@ -178,6 +175,58 @@ function inWorktree(
   };
   return { ok: true, plan };
 }
+
+/** One fixed worktree, detached at the Base, so the review never moves the main checkout. */
+function architectureWorktree(input: PlanInput): PlanResult {
+  const base = resolveBase(input, null);
+  if (!input.origin.branches.includes(base.branch)) {
+    return { ok: false, reason: { code: 'base-missing', branch: base.branch } };
+  }
+  const skill = '/improve-codebase-architecture';
+  const worktree = join(worktreeDir(input.repo), 'architecture');
+  const reused = input.local.worktrees.includes(worktree);
+  const command = commandFor(input, worktree, skill);
+  const tmux = tmuxFor(input);
+  const worktreeStep: PlanStep = reused
+    ? {
+        key: 'worktree',
+        action: { code: 'worktree-reset', base: base.branch },
+        commands: worktreeReset(worktree, base.branch).map(show),
+      }
+    : {
+        key: 'worktree',
+        action: { code: 'worktree-detach', base: base.branch },
+        commands: [show(worktreeDetach(worktree, base.branch))],
+      };
+  const plan: LaunchPlan = {
+    target: input.target,
+    skill,
+    base,
+    branch: null,
+    worktree,
+    reuse: { branch: false, worktree: reused },
+    cwd: worktree,
+    command,
+    tmux,
+    claims: [],
+    steps: [baseStep(base.branch), fetchStep, worktreeStep, terminalStep(command, tmux)],
+  };
+  return { ok: true, plan };
+}
+
+function baseStep(branch: string): PlanStep {
+  return {
+    key: 'base',
+    action: { code: 'check-base', branch },
+    commands: [show(baseCheck(branch))],
+  };
+}
+
+const fetchStep: PlanStep = {
+  key: 'fetch',
+  action: { code: 'fetch' },
+  commands: [show(fetchOrigin)],
+};
 
 function sessionLink({ link, repo, target }: PlanInput): SessionLink | null {
   if (!link || target.kind === 'architecture') return null;
@@ -216,12 +265,12 @@ function terminalStep(command: string, tmux: string | null): PlanStep {
 
 const pruneStep: PlanStep = { key: 'prune', action: { code: 'prune' }, commands: [] };
 
-function resolveBase(input: PlanInput, star: IssueRef): NonNullable<LaunchPlan['base']> {
+function resolveBase(input: PlanInput, star: IssueRef | null): NonNullable<LaunchPlan['base']> {
   const { sky, repo } = input;
   if (input.base) return { branch: input.base, source: 'override', systemId: null };
   const bySystem = new Map(sky.systems.map((s) => [s.id, s]));
-  const ticket = sky.tickets.find((t) => t.id === star.id);
-  let system = bySystem.get(ticket ? (ticket.systemId ?? '') : star.id);
+  const ticket = star && sky.tickets.find((t) => t.id === star.id);
+  let system = star ? bySystem.get(ticket ? (ticket.systemId ?? '') : star.id) : undefined;
   while (system) {
     if (system.base) return { branch: system.base, source: 'system', systemId: system.id };
     system = bySystem.get(system.parentId ?? '');
