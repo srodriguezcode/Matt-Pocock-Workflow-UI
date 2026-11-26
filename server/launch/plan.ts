@@ -205,7 +205,7 @@ function inWorktree(
 }
 
 function sessionLink({ link, repo, target }: CheckoutInput): SessionLink | null {
-  if (!link || target.kind === 'architecture' || target.kind === 'session') return null;
+  if (!link || !('id' in target)) return null;
   return { settingsPath: link.settingsPath, target: encodeTarget({ repo: repo.path, target }) };
 }
 

@@ -35,7 +35,6 @@ const ARCHITECTURE_OPTION: StartOption = {
 /** The sheet key of a new session, kept apart from star ids the same way as `ARCHITECTURE`. */
 export const SESSION = '\0session';
 
-/** Each opening gets its own, so two new sessions in the container never share a tmux name. */
 const sessionKey = () => Date.now().toString(36);
 
 /** A sheet key that names no star. Its sheet sits in the corner, not on the sky. */
@@ -78,7 +77,6 @@ export class Start {
   });
 
   private readonly session = signal<SessionTarget>({ kind: 'session', key: sessionKey() });
-  /** The first message and skill typed into the new-session sheet. */
   readonly sessionTarget = this.session.asReadonly();
 
   private readonly planned = signal<Planned | null>(null);
@@ -119,6 +117,10 @@ export class Start {
       if (open === null) return;
       const unselected = !isRepoStart(open) && open !== this.selected();
       if (unselected || !this.opens(open)) untracked(() => this.close());
+    });
+    effect(() => {
+      this.board.activePath();
+      untracked(() => this.session.set({ kind: 'session', key: sessionKey() }));
     });
     effect(() => {
       const key = this.planKey();

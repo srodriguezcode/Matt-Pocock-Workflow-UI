@@ -64,7 +64,7 @@ export class DemoStore {
     const repo = this.find(request.repo);
     if (!repo) return null;
     const planned = repo.plans.find((p) => sameTarget(p.target, request.target));
-    if (planned?.result.ok) {
+    if (planned?.result.ok && request.target.kind === 'session') {
       return {
         ok: true,
         plan: { ...structuredClone(planned.result.plan), target: request.target },

@@ -341,6 +341,13 @@ describe('Start', () => {
       ]);
     });
 
+    it('drops the typed message when another repo turns active', () => {
+      start.editSession({ prompt: 'hi', skill: 'triage' });
+      board.activePath.set('/other');
+      tick();
+      expect(start.sessionTarget()).toEqual({ kind: 'session', key: expect.any(String) });
+    });
+
     it('takes a new key and an empty box after a Start opens', async () => {
       vi.useFakeTimers();
       start.open(SESSION);

@@ -9,7 +9,7 @@ export type LaunchKind = StarKind | 'architecture' | 'session';
 /** The skills a new session may open with. The sheet offers only the installed ones. */
 export type NewSessionSkill = 'grill-with-docs' | 'to-spec' | 'wayfinder' | 'triage';
 
-/** `key` is unique per sheet opening, so two new sessions never share a tmux name. */
+/** `key` is unique per sheet opening. `prompt` is the first message, not a system prompt. */
 export interface SessionTarget {
   kind: 'session';
   key: string;

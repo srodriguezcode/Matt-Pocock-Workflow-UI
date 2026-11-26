@@ -148,10 +148,10 @@ export class Board {
   async checkGaps(): Promise<void> {
     const path = this.activePath();
     try {
-      const { gaps, sessionSkills } = await this.api.gaps(path);
+      const reply = await this.api.gaps(path);
       if (this.activePath() !== path) return;
-      this.gaps.set(gaps);
-      this.sessionSkills.set(sessionSkills);
+      this.gaps.set(reply.gaps);
+      this.sessionSkills.set(reply.sessionSkills);
     } catch {
       if (this.activePath() !== path) return;
       this.gaps.set([]);

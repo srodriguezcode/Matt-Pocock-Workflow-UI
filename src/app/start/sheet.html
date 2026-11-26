@@ -4,7 +4,9 @@
   <div #sheet class="sheet" role="dialog" aria-modal="true" [attr.aria-label]="title()">
     <div class="head">
       <b>{{ title() }}</b>
-      <span class="note">{{ skill() }}</span>
+      @if (!session()) {
+        <span class="note">{{ skill() }}</span>
+      }
     </div>
     @if (launch(); as l) {
       <div class="progress">
