@@ -27,7 +27,6 @@ describe('English wording of Start reasons', () => {
         'gated: #602 blocks Scheduled sweeps',
       ],
       [{ code: 'ready-for-human' }, "ready-for-human: yours, not an agent's"],
-      [{ code: 'no-readiness' }, 'no readiness label'],
       [{ code: 'no-decision-frontier' }, 'no decision frontier'],
       [{ code: 'no-tickets' }, 'no tickets yet'],
       [{ code: 'spent' }, 'every ticket is closed'],

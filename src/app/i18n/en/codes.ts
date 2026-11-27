@@ -151,7 +151,6 @@ const startReasons: StartReasonWording = {
   'blocked-by': ({ blockers, outside }) => `blocked by ${list([...blockers, ...outside])}`,
   gated: ({ blockers, system }) => `gated: ${list(blockers)} blocks ${system}`,
   'ready-for-human': () => "ready-for-human: yours, not an agent's",
-  'no-readiness': () => 'no readiness label',
   'no-decision-frontier': () => 'no decision frontier',
   'no-tickets': () => 'no tickets yet',
   spent: () => 'every ticket is closed',

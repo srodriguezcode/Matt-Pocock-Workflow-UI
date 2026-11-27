@@ -211,7 +211,7 @@ function undecidedName(remaps: LabelRemaps, star: Pick<IssueRef, 'labels'>): str
   return star.labels.find((l) => names.includes(l.name))?.name ?? null;
 }
 
-/** Its Gate past In flight does not matter: a Blocked or Gated ticket still gets triaged. */
+/** Any Gate but In flight: a Blocked or Gated ticket still gets triaged. */
 function isUntriaged(ticket: Ticket): boolean {
   const unread = ticket.readiness === 'undecided' || ticket.readiness === 'none';
   return ticket.kind === 'build' && ticket.gate !== 'in-flight' && unread;
