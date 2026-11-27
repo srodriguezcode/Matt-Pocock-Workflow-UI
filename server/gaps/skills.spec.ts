@@ -14,13 +14,14 @@ const repo: RepoConfig = {
 };
 
 describe('checkSkills', () => {
-  it('finds nothing when all five resolve in the repo', async () => {
+  it('finds nothing when all seven resolve in the repo', async () => {
     const fs = new FakeFs({
       '/code/app/.claude/skills/implement/SKILL.md': '',
       '/code/app/.claude/skills/implement-ticket/SKILL.md': '',
       '/code/app/.claude/skills/implement-parallel/SKILL.md': '',
       '/code/app/.claude/skills/wayfinder/SKILL.md': '',
       '/code/app/.claude/skills/to-tickets/SKILL.md': '',
+      '/code/app/.claude/skills/triage/SKILL.md': '',
       '/code/app/.claude/skills/improve-codebase-architecture/SKILL.md': '',
     });
     expect(await checkSkills(fs, repo, '/home/dev', '/board')).toEqual([]);
@@ -33,6 +34,7 @@ describe('checkSkills', () => {
       '/home/dev/.claude/skills/implement-parallel/SKILL.md': '',
       '/home/dev/.claude/skills/wayfinder/SKILL.md': '',
       '/home/dev/.claude/skills/to-tickets/SKILL.md': '',
+      '/home/dev/.claude/skills/triage/SKILL.md': '',
       '/home/dev/.claude/skills/improve-codebase-architecture/SKILL.md': '',
     });
     expect(await checkSkills(fs, repo, '/home/dev', '/board')).toEqual([]);
@@ -44,6 +46,7 @@ describe('checkSkills', () => {
       '/code/app/.claude/skills/implement-ticket/SKILL.md': '',
       '/code/app/.claude/skills/wayfinder/SKILL.md': '',
       '/code/app/.claude/skills/to-tickets/SKILL.md': '',
+      '/code/app/.claude/skills/triage/SKILL.md': '',
       '/code/app/.claude/skills/improve-codebase-architecture/SKILL.md': '',
     });
     const gaps = await checkSkills(fs, repo, '/home/dev', '/board');
@@ -71,6 +74,7 @@ describe('checkSkills', () => {
       '/code/app/.claude/skills/implement-parallel/SKILL.md': '',
       '/code/app/.claude/skills/wayfinder/SKILL.md': '',
       '/code/app/.claude/skills/to-tickets/SKILL.md': '',
+      '/code/app/.claude/skills/triage/SKILL.md': '',
       '/code/app/.claude/skills/improve-codebase-architecture/SKILL.md': '',
     });
     const gaps = await checkSkills(fs, repo, '/home/dev', '/board');
@@ -89,6 +93,7 @@ describe('checkSkills', () => {
       '/code/app/.claude/skills/implement-parallel/SKILL.md': '',
       '/code/app/.claude/skills/wayfinder/SKILL.md': '',
       '/code/app/.claude/skills/to-tickets/SKILL.md': '',
+      '/code/app/.claude/skills/triage/SKILL.md': '',
       '/code/app/.claude/skills/improve-codebase-architecture/SKILL.md': '',
     });
     const gaps = await checkSkills(fs, repo, '/home/dev', '/board');
@@ -108,6 +113,7 @@ describe('checkSkills', () => {
       '/code/app/.agents/skills/keep.txt': '',
       '/code/app/.agents/skills/wayfinder/SKILL.md': '',
       '/code/app/.agents/skills/to-tickets/SKILL.md': '',
+      '/code/app/.claude/skills/triage/SKILL.md': '',
       '/code/app/.claude/skills/implement/SKILL.md': '',
       '/code/app/.claude/skills/implement-ticket/SKILL.md': '',
       '/code/app/.claude/skills/implement-parallel/SKILL.md': '',
@@ -123,6 +129,7 @@ describe('checkSkills', () => {
       '/code/app/.claude/skills/implement-parallel/SKILL.md': '',
       '/code/app/.claude/skills/wayfinder/SKILL.md': '',
       '/code/app/.claude/skills/to-tickets/SKILL.md': '',
+      '/code/app/.claude/skills/triage/SKILL.md': '',
     });
     const gaps = await checkSkills(fs, repo, '/home/dev', '/board');
     expect(gaps).toEqual([
@@ -136,6 +143,27 @@ describe('checkSkills', () => {
     ]);
   });
 
+  it('blocks only the triage Start when /triage is missing', async () => {
+    const fs = new FakeFs({
+      '/code/app/.claude/skills/implement/SKILL.md': '',
+      '/code/app/.claude/skills/implement-ticket/SKILL.md': '',
+      '/code/app/.claude/skills/implement-parallel/SKILL.md': '',
+      '/code/app/.claude/skills/wayfinder/SKILL.md': '',
+      '/code/app/.claude/skills/to-tickets/SKILL.md': '',
+      '/code/app/.claude/skills/improve-codebase-architecture/SKILL.md': '',
+    });
+    const gaps = await checkSkills(fs, repo, '/home/dev', '/board');
+    expect(gaps).toEqual([
+      expect.objectContaining({
+        id: 'skill-triage',
+        problem: { code: 'skill-missing', skill: 'triage' },
+        tier: 'start',
+        blocks: ['triage'],
+        fix: { skill: '/setup-matt-pocock-skills' },
+      }),
+    ]);
+  });
+
   it('searches the Claude config dir in place of home, and points the fix there', async () => {
     const all = [
       'implement',
@@ -143,6 +171,7 @@ describe('checkSkills', () => {
       'implement-parallel',
       'wayfinder',
       'to-tickets',
+      'triage',
       'improve-codebase-architecture',
     ];
     const found = new FakeFs(Object.fromEntries(all.map((n) => [`/cfg/skills/${n}/SKILL.md`, ''])));
@@ -164,7 +193,13 @@ describe('checkSkills', () => {
   describe('the mattpocock-skills plugin', () => {
     const install =
       '/home/dev/.claude/plugins/cache/claude-plugins-official/mattpocock-skills/1.3.2';
-    const upstream = ['implement', 'wayfinder', 'to-tickets', 'improve-codebase-architecture'];
+    const upstream = [
+      'implement',
+      'wayfinder',
+      'to-tickets',
+      'triage',
+      'improve-codebase-architecture',
+    ];
     const installed = (entry: Record<string, unknown>) =>
       JSON.stringify({
         version: 2,
@@ -218,6 +253,7 @@ describe('sessionSkills', () => {
       '/code/app/.claude/skills/implement-parallel/SKILL.md': '',
       '/code/app/.claude/skills/wayfinder/SKILL.md': '',
       '/code/app/.claude/skills/to-tickets/SKILL.md': '',
+      '/code/app/.claude/skills/triage/SKILL.md': '',
       '/code/app/.claude/skills/improve-codebase-architecture/SKILL.md': '',
       '/home/dev/.claude/skills/triage/SKILL.md': '',
     });

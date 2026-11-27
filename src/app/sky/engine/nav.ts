@@ -5,7 +5,7 @@ import type { Layout, Point, Scene } from './types';
 
 export type Direction = 'up' | 'down' | 'left' | 'right';
 
-const KIND_ORDER: LaunchKind[] = ['system', 'split', 'ticket', 'decision', 'map'];
+const KIND_ORDER: LaunchKind[] = ['system', 'split', 'ticket', 'decision', 'map', 'triage'];
 
 const TAU = Math.PI * 2;
 

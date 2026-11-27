@@ -60,7 +60,6 @@ export type StartReason =
   | { code: 'blocked-by'; blockers: string[]; outside: string[] }
   | { code: 'gated'; blockers: string[]; system: string }
   | { code: 'ready-for-human' }
-  | { code: 'no-readiness' }
   | { code: 'no-decision-frontier' }
   | { code: 'no-tickets' }
   | { code: 'spent' }

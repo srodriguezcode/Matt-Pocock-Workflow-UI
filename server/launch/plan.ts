@@ -81,6 +81,9 @@ export function planStart(input: PlanInput): PlanResult {
     const prompt = splitPrompt(input.repo, sky, system);
     return mainCheckout(input, noClaims, `/to-tickets ${arg(system, 'to-tickets')}`, prompt);
   }
+  if (target.kind === 'triage' && ticket) {
+    return mainCheckout(input, noClaims, `/triage ${arg(ticket, 'triage')}`);
+  }
   if (target.kind === 'decision' && ticket && map) {
     return mainCheckout(input, claimed(input, [ticket], []), wayfinder(map, ticket));
   }

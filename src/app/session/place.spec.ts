@@ -56,6 +56,11 @@ describe('placeSessions', () => {
     ]);
   });
 
+  it('puts a triage Session on its Untriaged ticket', () => {
+    const placed = placeSessions(sky([ticket('1')]), [session('a', 'triage', '1')]);
+    expect(shape(placed)).toEqual([['1', 'a', null]]);
+  });
+
   it('leaves out a Session whose target is not on the sky', () => {
     expect(placeSessions(sky([ticket('1')]), [session('a', 'ticket', '9')]).size).toBe(0);
   });
