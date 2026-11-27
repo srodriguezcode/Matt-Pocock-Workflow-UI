@@ -18,12 +18,13 @@ function scene(over: SceneOptions = {}): Scene {
 }
 
 describe('startableOrder', () => {
-  it('lists Frontier systems, Frontier tickets, Decision frontier tickets, then the Map', () => {
+  it('lists Frontier systems, Frontier tickets, Decision frontier tickets, the Map, then Untriaged', () => {
     expect(startableOrder(scene(), startFor)).toEqual([
       ...['602', '292', '586'],
       ...['633', '640', '293', '587', '560', '405', '408', '502', '595'],
       '599',
       '512',
+      ...['615', '66', '297', '300', '403', '404', '511', '526', '527', '554'],
     ]);
   });
 

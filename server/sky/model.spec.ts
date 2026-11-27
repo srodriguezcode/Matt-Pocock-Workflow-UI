@@ -377,11 +377,11 @@ describe('Start options for tickets', () => {
     ).toEqual([
       { code: 'in-flight', holder: 'me', mine: true },
       { code: 'in-flight', holder: 'ana', mine: false },
-      { code: 'undecided', label: 'to-be-confirmed' },
+      { enabled: { code: 'triage' } },
       { code: 'blocked-by', blockers: ['#633', '#634'], outside: [] },
       { code: 'gated', blockers: ['#602'], system: 'Scheduled sweeps' },
       { code: 'ready-for-human' },
-      { code: 'no-readiness' },
+      { enabled: { code: 'triage' } },
       { code: 'blocked-by', blockers: [], outside: ['design sign-off'] },
       { code: 'blocked-by', blockers: [], outside: ['legal'] },
       { code: 'blocked-by', blockers: ['#633'], outside: [] },
@@ -402,12 +402,51 @@ describe('Start options for tickets', () => {
     });
     expect(system(built_.sky, '2').name).toBe('A System whose name runs past…');
   });
+});
 
-  it('reads the undecided label under its remapped name', () => {
+describe('Start options for Untriaged tickets', () => {
+  const triage = (id: string) => ({
+    enabled: true,
+    target: { kind: 'triage', id },
+    label: { code: 'triage' },
+  });
+
+  it('offers Triage on a Loose needs-triage ticket with no assignee', () => {
+    expect(built([issue('1', { labels: labels('needs-triage') })]).starts['1']).toEqual(
+      triage('1'),
+    );
+  });
+
+  it('offers Triage with no Readiness, on needs-info, and when Blocked or Gated', () => {
+    const { starts } = built([
+      issue('9'),
+      issue('1'),
+      issue('2', { labels: labels('needs-info') }),
+      issue('3', { labels: labels('needs-triage'), blockedByIds: ['9'] }),
+      issue('4', { title: 'Spec: x', blockedByIds: ['9'] }),
+      issue('5', { parentId: '4', labels: labels('to-be-confirmed') }),
+    ]);
+    for (const id of ['1', '2', '3', '5']) expect(starts[id]).toEqual(triage(id));
+  });
+
+  it('follows a remapped Undecided label', () => {
     const { starts } = built([issue('3', { labels: labels('triage') })], {
       'needs-triage': 'triage',
     });
-    expect(reason(starts['3'])).toEqual({ code: 'undecided', label: 'triage' });
+    expect(starts['3']).toEqual(triage('3'));
+  });
+
+  it('offers no Triage on an assigned, Decision or ready ticket', () => {
+    const { starts } = built([
+      issue('600', { labels: labels('wayfinder:map') }),
+      issue('1', { labels: labels('needs-triage'), assignees: ['ana'] }),
+      issue('2', { parentId: '600', labels: labels('wayfinder:research', 'needs-triage') }),
+      issue('3', { labels: agent }),
+      issue('4', { labels: labels('ready-for-human') }),
+    ]);
+    expect(['1', '2', '3', '4'].map((id) => starts[id]?.target)).not.toContainEqual(
+      expect.objectContaining({ kind: 'triage' }),
+    );
   });
 });
 

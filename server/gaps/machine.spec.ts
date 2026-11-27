@@ -49,7 +49,16 @@ describe('checkMachine', () => {
         id: 'claude-missing',
         problem: { code: 'claude-missing' },
         tier: 'start',
-        blocks: ['ticket', 'system', 'decision', 'map', 'split', 'architecture', 'session'],
+        blocks: [
+          'ticket',
+          'system',
+          'decision',
+          'map',
+          'split',
+          'triage',
+          'architecture',
+          'session',
+        ],
       }),
     ]);
   });
@@ -60,7 +69,16 @@ describe('checkMachine', () => {
       expect.objectContaining({
         id: 'iterm-missing',
         tier: 'start',
-        blocks: ['ticket', 'system', 'decision', 'map', 'split', 'architecture', 'session'],
+        blocks: [
+          'ticket',
+          'system',
+          'decision',
+          'map',
+          'split',
+          'triage',
+          'architecture',
+          'session',
+        ],
       }),
     ]);
   });

@@ -18,6 +18,7 @@ const NEEDS: SkillNeed[] = [
   { name: 'implement-parallel', blocks: ['system'] },
   { name: 'wayfinder', blocks: ['decision', 'map'] },
   { name: 'to-tickets', blocks: ['split'] },
+  { name: 'triage', blocks: ['triage'] },
   { name: 'improve-codebase-architecture', blocks: ['architecture'] },
 ];
 

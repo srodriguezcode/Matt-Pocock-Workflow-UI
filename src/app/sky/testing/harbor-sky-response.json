@@ -1985,9 +1985,9 @@
   },
   "starts": {
     "66": {
-      "enabled": false,
-      "target": { "kind": "ticket", "id": "66" },
-      "reason": { "code": "undecided", "label": "to-be-confirmed" }
+      "enabled": true,
+      "target": { "kind": "triage", "id": "66" },
+      "label": { "code": "triage" }
     },
     "292": {
       "enabled": true,
@@ -2015,24 +2015,24 @@
       "reason": { "code": "blocked-by", "blockers": ["#294"], "outside": [] }
     },
     "297": {
-      "enabled": false,
-      "target": { "kind": "ticket", "id": "297" },
-      "reason": { "code": "undecided", "label": "needs-triage" }
+      "enabled": true,
+      "target": { "kind": "triage", "id": "297" },
+      "label": { "code": "triage" }
     },
     "300": {
-      "enabled": false,
-      "target": { "kind": "ticket", "id": "300" },
-      "reason": { "code": "undecided", "label": "to-be-confirmed" }
+      "enabled": true,
+      "target": { "kind": "triage", "id": "300" },
+      "label": { "code": "triage" }
     },
     "403": {
-      "enabled": false,
-      "target": { "kind": "ticket", "id": "403" },
-      "reason": { "code": "undecided", "label": "to-be-confirmed" }
+      "enabled": true,
+      "target": { "kind": "triage", "id": "403" },
+      "label": { "code": "triage" }
     },
     "404": {
-      "enabled": false,
-      "target": { "kind": "ticket", "id": "404" },
-      "reason": { "code": "undecided", "label": "to-be-confirmed" }
+      "enabled": true,
+      "target": { "kind": "triage", "id": "404" },
+      "label": { "code": "triage" }
     },
     "405": {
       "enabled": true,
@@ -2050,9 +2050,9 @@
       "label": { "code": "ticket" }
     },
     "511": {
-      "enabled": false,
-      "target": { "kind": "ticket", "id": "511" },
-      "reason": { "code": "undecided", "label": "to-be-confirmed" }
+      "enabled": true,
+      "target": { "kind": "triage", "id": "511" },
+      "label": { "code": "triage" }
     },
     "512": {
       "enabled": true,
@@ -2060,19 +2060,19 @@
       "label": { "code": "map" }
     },
     "526": {
-      "enabled": false,
-      "target": { "kind": "ticket", "id": "526" },
-      "reason": { "code": "undecided", "label": "to-be-confirmed" }
+      "enabled": true,
+      "target": { "kind": "triage", "id": "526" },
+      "label": { "code": "triage" }
     },
     "527": {
-      "enabled": false,
-      "target": { "kind": "ticket", "id": "527" },
-      "reason": { "code": "undecided", "label": "to-be-confirmed" }
+      "enabled": true,
+      "target": { "kind": "triage", "id": "527" },
+      "label": { "code": "triage" }
     },
     "554": {
-      "enabled": false,
-      "target": { "kind": "ticket", "id": "554" },
-      "reason": { "code": "undecided", "label": "to-be-confirmed" }
+      "enabled": true,
+      "target": { "kind": "triage", "id": "554" },
+      "label": { "code": "triage" }
     },
     "558": {
       "enabled": false,
@@ -2190,9 +2190,9 @@
       "reason": { "code": "blocked-by", "blockers": ["#612"], "outside": [] }
     },
     "615": {
-      "enabled": false,
-      "target": { "kind": "ticket", "id": "615" },
-      "reason": { "code": "undecided", "label": "to-be-confirmed" }
+      "enabled": true,
+      "target": { "kind": "triage", "id": "615" },
+      "label": { "code": "triage" }
     },
     "633": {
       "enabled": true,

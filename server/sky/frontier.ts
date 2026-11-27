@@ -23,6 +23,8 @@ interface Inside {
   tickets: Ticket[];
 }
 
+const TRIAGE: StartLabel = { code: 'triage' };
+
 type Check<T> = (star: T, scope: Scope) => StartReason | null;
 
 const TICKET_CHECKS: Check<Ticket>[] = [
@@ -34,7 +36,6 @@ const TICKET_CHECKS: Check<Ticket>[] = [
     t.readiness === 'undecided' ? { code: 'undecided', label: undecidedLabel(remaps, t) } : null,
   (t, scope) => (t.gate === 'blocked' ? blockedReason(t, scope) : null),
   (t) => (t.light === 'yours' ? { code: 'ready-for-human' } : null),
-  (t) => (t.light === 'idle' ? { code: 'no-readiness' } : null),
   (t, { sky }) => (t.kind === 'decision' && sky.mapId === null ? { code: 'no-map' } : null),
   (t, { sky }) => (t.kind === 'decision' && t.systemId !== sky.mapId ? { code: 'off-map' } : null),
 ];
@@ -96,6 +97,14 @@ export function frontier(draft: SkyDraft, remaps: LabelRemaps): BuiltSky {
   const scope: Scope = { sky: draft, remaps, handles: handleIndex(draft) };
   const starts: Record<string, StartOption> = {};
   for (const ticket of draft.tickets) {
+    if (isUntriaged(ticket)) {
+      starts[ticket.id] = {
+        enabled: true,
+        target: { kind: 'triage', id: ticket.id },
+        label: TRIAGE,
+      };
+      continue;
+    }
     const decision = ticket.kind === 'decision';
     const target = { kind: decision ? 'decision' : 'ticket', id: ticket.id } as const;
     starts[ticket.id] = option(TICKET_CHECKS, ticket, scope, target, {
@@ -200,6 +209,12 @@ function undecidedLabel(remaps: LabelRemaps, ticket: Ticket): string | null {
 function undecidedName(remaps: LabelRemaps, star: Pick<IssueRef, 'labels'>): string | null {
   const names = UNDECIDED.map((name) => remaps[name] ?? name);
   return star.labels.find((l) => names.includes(l.name))?.name ?? null;
+}
+
+/** Its Gate past In flight does not matter: a Blocked or Gated ticket still gets triaged. */
+function isUntriaged(ticket: Ticket): boolean {
+  const unread = ticket.readiness === 'undecided' || ticket.readiness === 'none';
+  return ticket.kind === 'build' && ticket.gate !== 'in-flight' && unread;
 }
 
 function isSplit(system: SystemDraft): boolean {

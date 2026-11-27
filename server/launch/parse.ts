@@ -3,7 +3,7 @@ import type { LaunchTarget, SessionTarget, StarKind } from '@contract/launch';
 import { SESSION_SKILLS } from '#server/gaps/skills.ts';
 import { HttpError } from '#server/http/types.ts';
 
-export const STAR_KINDS: StarKind[] = ['ticket', 'system', 'decision', 'map', 'split'];
+export const STAR_KINDS: StarKind[] = ['ticket', 'system', 'decision', 'map', 'split', 'triage'];
 const MAX_KEY = 40;
 /** Characters. A first message longer than this belongs in a file the session reads. */
 export const MAX_PROMPT = 20_000;

@@ -35,6 +35,7 @@ const allSkills = {
   '/code/app/.claude/skills/implement-parallel/SKILL.md': '',
   '/code/app/.claude/skills/wayfinder/SKILL.md': '',
   '/code/app/.claude/skills/to-tickets/SKILL.md': '',
+  '/code/app/.claude/skills/triage/SKILL.md': '',
   '/code/app/.claude/skills/improve-codebase-architecture/SKILL.md': '',
 };
 
@@ -65,6 +66,7 @@ describe('checkRepo', () => {
       'skill-implement-parallel',
       'skill-wayfinder',
       'skill-to-tickets',
+      'skill-triage',
       'skill-improve-codebase-architecture',
     ]);
   });

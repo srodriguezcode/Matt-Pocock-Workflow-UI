@@ -11,7 +11,7 @@ export interface LinkTarget {
   target: LinkedTarget;
 }
 
-const KINDS: StarKind[] = ['ticket', 'system', 'decision', 'map', 'split'];
+const KINDS: StarKind[] = ['ticket', 'system', 'decision', 'map', 'split', 'triage'];
 /** Characters. The title rides in an env var and a header, so it stays short. */
 const TITLE_MAX = 80;
 
