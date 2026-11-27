@@ -89,6 +89,7 @@ const skillEffects: StartSkillNames = {
   'implement-parallel': 'Start on a Frontier system has nothing to run.',
   wayfinder: 'Start on a decision or the Map has nothing to run.',
   'to-tickets': 'Start on a Split frontier Spec has nothing to run.',
+  triage: 'Start on an Untriaged ticket or Spec has nothing to run.',
   'improve-codebase-architecture': 'The architecture review has nothing to run.',
 };
 
@@ -136,6 +137,7 @@ const startLabels: StartLabelWording = {
   map: () => 'Start the map',
   system: ({ count }) => `Start all ${count}`,
   split: () => 'Split into tickets',
+  triage: () => 'Triage',
   architecture: () => 'Review architecture',
   session: () => 'New session',
 };
@@ -164,6 +166,7 @@ const startReasons: StartReasonWording = {
     `${handle} is blocked from outside by ${list(blockers)}`,
   'not-frontier-system': () => 'not a Frontier system',
   splitting: () => 'a Session is splitting it now',
+  triaging: () => 'a Session is triaging it now',
   gap: ({ problem }) => `Gap: ${word(gapTitles, problem)}`,
 };
 

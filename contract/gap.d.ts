@@ -10,6 +10,7 @@ export type StartSkill =
   | 'implement-parallel'
   | 'wayfinder'
   | 'to-tickets'
+  | 'triage'
   | 'improve-codebase-architecture';
 
 /** The client words both the title and the effect from this one code. */

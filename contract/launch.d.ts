@@ -1,7 +1,10 @@
 import type { GapProblem } from './gap.d.ts';
 
-/** `split` is a Split frontier Spec: the Start runs `/to-tickets` on it. */
-export type StarKind = 'ticket' | 'system' | 'decision' | 'map' | 'split';
+/**
+ * `split` is a Split frontier Spec: the Start runs `/to-tickets` on it.
+ * `triage` is an Untriaged ticket or Spec: the Start runs `/triage` on it.
+ */
+export type StarKind = 'ticket' | 'system' | 'decision' | 'map' | 'split' | 'triage';
 
 /** `architecture` and `session` Start on the repo itself and carry no star id. */
 export type LaunchKind = StarKind | 'architecture' | 'session';
@@ -41,6 +44,7 @@ export type StartLabel =
   | { code: 'map' }
   | { code: 'system'; count: number }
   | { code: 'split' }
+  | { code: 'triage' }
   | { code: 'architecture' }
   | { code: 'session' };
 
@@ -70,6 +74,7 @@ export type StartReason =
   | { code: 'blocked-from-outside'; handle: string; blockers: string[] }
   | { code: 'not-frontier-system' }
   | { code: 'splitting' }
+  | { code: 'triaging' }
   | { code: 'gap'; problem: GapProblem };
 
 /** What the pill offers for one star. Stars with nothing to offer have no entry. */
